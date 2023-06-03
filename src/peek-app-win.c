@@ -2,6 +2,10 @@
 
 struct _PeekAppWin {
   GtkApplicationWindow parent;
+
+  // header bar
+  GtkWidget *search_entry;
+  GtkWidget *header_menu_button;
 };
 
 G_DEFINE_TYPE (PeekAppWin, peek_app_win, GTK_TYPE_APPLICATION_WINDOW)
@@ -22,6 +26,7 @@ static void
 peek_app_win_init (PeekAppWin *self)
 {
   gtk_widget_init_template (GTK_WIDGET (self));
+  
 }
 
 static void
@@ -32,6 +37,15 @@ peek_app_win_class_init (PeekAppWinClass *klass)
 
   gtk_widget_class_set_template_from_resource (GTK_WIDGET_CLASS (klass),
                                                "/com/github/reyncode/peek/ui/window.ui");
+
+  // header bar
+  gtk_widget_class_bind_template_child (GTK_WIDGET_CLASS (klass),
+                                        PeekAppWin,
+                                        search_entry);
+  
+  gtk_widget_class_bind_template_child (GTK_WIDGET_CLASS (klass),
+                                        PeekAppWin,
+                                        header_menu_button);
 }
 
 PeekAppWin *
