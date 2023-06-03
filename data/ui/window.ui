@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+
+  <template class="PeekAppWin" parent="GtkApplicationWindow">
+    <property name="title" translatable="yes">Peek</property>
+    <property name="default-width">600</property>
+    <property name="default-height">400</property>
+
+    <child>
+
+      <object class="GtkBox" id="window_box">
+        <property name="visible">True</property> 
+        <property name="orientation">vertical</property>
+
+        <!-- header bar -->
+        <child>
+          <object class="GtkHeaderBar" id="header_bar">
+            <property name="visible">True</property>
+
+            <child type="title">
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="label">App!</property>
+              </object>
+            </child>
+
+          </object>
+        </child>
+
+        <!-- main content -->
+        <child>
+          <object class="GtkBox" id="content_box">
+            <property name="visible">True</property> 
+            <property name="orientation">vertical</property>
+          </object>
+        </child>
+
+      </object>
+    
+    </child>
+
+  </template>
+
+</interface>
