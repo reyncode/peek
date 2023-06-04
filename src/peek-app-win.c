@@ -1,11 +1,23 @@
 #include "peek-app-win.h"
 
+/*
+  list fields
+
+  name,
+  pid,
+  memory,
+  usr,
+  priority
+*/
+
 struct _PeekAppWin {
   GtkApplicationWindow parent;
 
   // header bar
   GtkWidget *search_entry;
   GtkWidget *header_menu_button;
+
+  // main window
 };
 
 G_DEFINE_TYPE (PeekAppWin, peek_app_win, GTK_TYPE_APPLICATION_WINDOW)
