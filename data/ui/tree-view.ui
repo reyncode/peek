@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+
+  <template class="PeekTreeView" parent="GtkBin">
+    <child>
+      <object class="GtkScrolledWindow">
+        <property name="visible">True</property> 
+        <property name="shadow-type">GTK_SHADOW_ETCHED_IN</property> 
+        <property name="vscrollbar-policy">GTK_POLICY_AUTOMATIC</property> 
+        <property name="expand">True</property> 
+
+        <child>
+          <object class="GtkTreeView" id="tree_view">
+            <property name="visible">True</property> 
+
+          </object>
+        </child>
+
+      </object>
+    </child>
+
+  </template>
+
+</interface>

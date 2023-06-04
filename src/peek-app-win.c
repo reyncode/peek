@@ -1,14 +1,5 @@
 #include "peek-app-win.h"
-
-/*
-  list fields
-
-  name,
-  pid,
-  memory,
-  usr,
-  priority
-*/
+#include "peek-tree-view.h"
 
 struct _PeekAppWin {
   GtkApplicationWindow parent;
@@ -18,6 +9,7 @@ struct _PeekAppWin {
   GtkWidget *header_menu_button;
 
   // main window
+  GtkWidget *process_tree_view;
 };
 
 G_DEFINE_TYPE (PeekAppWin, peek_app_win, GTK_TYPE_APPLICATION_WINDOW)
@@ -37,6 +29,8 @@ peek_app_win_dispose (GObject *object)
 static void
 peek_app_win_init (PeekAppWin *self)
 {
+  g_type_ensure (PEEK_TYPE_TREE_VIEW);
+
   gtk_widget_init_template (GTK_WIDGET (self));
   
 }
@@ -58,6 +52,11 @@ peek_app_win_class_init (PeekAppWinClass *klass)
   gtk_widget_class_bind_template_child (GTK_WIDGET_CLASS (klass),
                                         PeekAppWin,
                                         header_menu_button);
+
+  // main window 
+  gtk_widget_class_bind_template_child (GTK_WIDGET_CLASS (klass),
+                                        PeekAppWin,
+                                        process_tree_view);
 }
 
 PeekAppWin *

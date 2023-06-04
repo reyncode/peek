@@ -80,21 +80,9 @@
         <property name="visible">True</property> 
         <property name="orientation">vertical</property> 
 
-        <!-- process view -->
         <child>
-          <object class="GtkScrolledWindow">
+          <object class="PeekTreeView" id="process_tree_view">
             <property name="visible">True</property> 
-            <property name="shadow-type">GTK_SHADOW_ETCHED_IN</property> 
-            <property name="vscrollbar-policy">GTK_POLICY_AUTOMATIC</property> 
-            <property name="expand">True</property> 
-
-            <child>
-              <object class="PeekTreeView">
-              <property name="visible">True</property> 
-
-              </object>
-            </child>
-
           </object>
         </child>
 
