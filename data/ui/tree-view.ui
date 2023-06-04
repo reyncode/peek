@@ -13,6 +13,12 @@
           <object class="GtkTreeView" id="tree_view">
             <property name="visible">True</property> 
 
+            <child internal-child="selection">
+              <object class="GtkTreeSelection">
+                <signal handler="peek_tree_view_selection_changed" name="changed" object="PeekTreeView" swapped="no"/>
+              </object>
+            </child>
+
           </object>
         </child>
 
