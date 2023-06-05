@@ -1,15 +1,5 @@
 #include "peek-tree-view.h"
 
-/*
-  list fields
-
-  name,
-  pid,
-  memory,
-  usr,
-  priority
-*/
-
 struct _PeekTreeView {
   GtkBin        parent;
 
@@ -40,6 +30,14 @@ static Process data[] =
   { "code", 2476, 132.6, "alex" },
   { "dconf-service", 1931, 819.2, "root" },
 };
+
+void
+peek_tree_view_set_search_entry (PeekTreeView *peek_tree_view,
+                                 GtkEntry *entry)
+{
+  gtk_tree_view_set_search_entry (GTK_TREE_VIEW (peek_tree_view->tree_view),
+                                  entry);
+}
 
 static void
 peek_tree_view_selection_changed (GtkTreeSelection *selection,
@@ -75,39 +73,6 @@ peek_tree_view_create_model ()
 }
 
 static void
-peek_tree_view_add_columns (GtkTreeView *tree_view)
-{
-  GtkCellRenderer   *renderer;
-  GtkTreeViewColumn *column;
-
-  renderer = gtk_cell_renderer_text_new ();
-
-  column = gtk_tree_view_column_new_with_attributes ("Process Name",
-                                                     renderer,
-                                                     "text", COLUMN_NAME,
-                                                     NULL);
-  gtk_tree_view_append_column (tree_view, column);
-
-  column = gtk_tree_view_column_new_with_attributes ("PID",
-                                                     renderer,
-                                                     "text", COLUMN_PID,
-                                                     NULL);
-  gtk_tree_view_append_column (tree_view, column);
-
-  column = gtk_tree_view_column_new_with_attributes ("Memory",
-                                                     renderer,
-                                                     "text", COLUMN_MEMORY,
-                                                     NULL);
-  gtk_tree_view_append_column (tree_view, column);
-
-  column = gtk_tree_view_column_new_with_attributes ("User",
-                                                     renderer,
-                                                     "text", COLUMN_USER,
-                                                     NULL);
-  gtk_tree_view_append_column (tree_view, column);
-}
-
-static void
 peek_tree_view_finalize (GObject *object)
 {
   G_OBJECT_CLASS (peek_tree_view_parent_class)->finalize (object);
@@ -123,8 +88,6 @@ peek_tree_view_init (PeekTreeView *self)
   gtk_tree_view_set_model (GTK_TREE_VIEW (self->tree_view), self->model);
 
   g_object_unref (self->model);
-
-  peek_tree_view_add_columns (GTK_TREE_VIEW (self->tree_view));
 
   gtk_widget_show_all (GTK_WIDGET (self));
 }

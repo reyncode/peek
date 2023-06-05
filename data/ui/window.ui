@@ -81,7 +81,7 @@
         <property name="orientation">vertical</property> 
 
         <child>
-          <object class="PeekTreeView" id="process_tree_view">
+          <object class="PeekTreeView" id="peek_tree_view">
             <property name="visible">True</property> 
           </object>
         </child>

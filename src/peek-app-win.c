@@ -9,7 +9,7 @@ struct _PeekAppWin {
   GtkWidget *header_menu_button;
 
   // main window
-  GtkWidget *process_tree_view;
+  GtkWidget *peek_tree_view;
 };
 
 G_DEFINE_TYPE (PeekAppWin, peek_app_win, GTK_TYPE_APPLICATION_WINDOW)
@@ -33,6 +33,8 @@ peek_app_win_init (PeekAppWin *self)
 
   gtk_widget_init_template (GTK_WIDGET (self));
   
+  peek_tree_view_set_search_entry (PEEK_TREE_VIEW (self->peek_tree_view),
+                                   GTK_ENTRY (self->search_entry));
 }
 
 static void
@@ -56,7 +58,7 @@ peek_app_win_class_init (PeekAppWinClass *klass)
   // main window 
   gtk_widget_class_bind_template_child (GTK_WIDGET_CLASS (klass),
                                         PeekAppWin,
-                                        process_tree_view);
+                                        peek_tree_view);
 }
 
 PeekAppWin *
