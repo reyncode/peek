@@ -3,6 +3,7 @@ sources = [
   'peek-app.c', 'peek-app.h',
   'peek-app-win.c', 'peek-app-win.h',
   'peek-tree-view.c', 'peek-tree-view.h',
+  'peek-process-data.c', 'peek-process-data.h',
 ]
 
 executable(

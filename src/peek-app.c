@@ -1,5 +1,6 @@
 #include "peek-app.h"
 #include "peek-app-win.h"
+#include "peek-process-data.h"
 
 #define APPLICATION_ID "com.github.reyncode.peek"
 
@@ -25,6 +26,8 @@ peek_app_activate (GApplication *self)
   window = peek_app_win_new (PEEK_APP (self));
   
   gtk_window_present (GTK_WINDOW (window));
+
+  peek_process_data_test_call ();
 }
 
 static void
