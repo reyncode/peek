@@ -1,7 +1,7 @@
-#include "peek-app-win.h"
+#include "peek-window.h"
 #include "peek-tree-view.h"
 
-struct _PeekAppWin {
+struct _PeekWindow {
   GtkApplicationWindow parent;
 
   // header bar
@@ -12,23 +12,22 @@ struct _PeekAppWin {
   GtkWidget *peek_tree_view;
 };
 
-G_DEFINE_TYPE (PeekAppWin, peek_app_win, GTK_TYPE_APPLICATION_WINDOW)
+G_DEFINE_TYPE (PeekWindow, peek_window, GTK_TYPE_APPLICATION_WINDOW)
 
 static void
-peek_app_win_finalize (GObject *object)
+peek_window_finalize (GObject *object)
 {
-  G_OBJECT_CLASS (peek_app_win_parent_class)->finalize (object);
+  G_OBJECT_CLASS (peek_window_parent_class)->finalize (object);
 }
 
 static void
-peek_app_win_dispose (GObject *object)
+peek_window_dispose (GObject *object)
 {
-  G_OBJECT_CLASS (peek_app_win_parent_class)->dispose (object);
+  G_OBJECT_CLASS (peek_window_parent_class)->dispose (object);
 }
 
-// 2
 static void
-peek_app_win_init (PeekAppWin *self)
+peek_window_init (PeekWindow *self)
 {
   g_type_ensure (PEEK_TYPE_TREE_VIEW);
 
@@ -39,36 +38,37 @@ peek_app_win_init (PeekAppWin *self)
 }
 
 static void
-peek_app_win_class_init (PeekAppWinClass *klass)
+peek_window_class_init (PeekWindowClass *klass)
 {
-  G_OBJECT_CLASS (klass)->finalize = peek_app_win_finalize;
-  G_OBJECT_CLASS (klass)->dispose = peek_app_win_dispose;
+  G_OBJECT_CLASS (klass)->finalize = peek_window_finalize;
+  G_OBJECT_CLASS (klass)->dispose = peek_window_dispose;
 
   gtk_widget_class_set_template_from_resource (GTK_WIDGET_CLASS (klass),
                                                "/com/github/reyncode/peek/ui/window.ui");
 
   // header bar
   gtk_widget_class_bind_template_child (GTK_WIDGET_CLASS (klass),
-                                        PeekAppWin,
+                                        PeekWindow,
                                         search_entry);
   
   gtk_widget_class_bind_template_child (GTK_WIDGET_CLASS (klass),
-                                        PeekAppWin,
+                                        PeekWindow,
                                         header_menu_button);
 
   // main window 
   gtk_widget_class_bind_template_child (GTK_WIDGET_CLASS (klass),
-                                        PeekAppWin,
+                                        PeekWindow,
                                         peek_tree_view);
 }
 
-PeekAppWin *
-peek_app_win_new (PeekApp *app)
+PeekWindow *
+peek_window_new (PeekApplication *app)
 {
-  return g_object_new (
-    PEEK_TYPE_APP_WIN, 
-    "application",
-    app,
-    NULL
-  );
+  PeekWindow *window;
+
+  window = g_object_new (PEEK_TYPE_WINDOW,
+                         "application", app,
+                         NULL);
+
+  return window;
 }

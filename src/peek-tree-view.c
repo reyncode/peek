@@ -83,6 +83,8 @@ peek_tree_view_init (PeekTreeView *self)
 {
   gtk_widget_init_template (GTK_WIDGET (self));
 
+  // get process cache
+
   self->model = peek_tree_view_create_model ();
 
   gtk_tree_view_set_model (GTK_TREE_VIEW (self->tree_view), self->model);
