@@ -26,6 +26,7 @@ peek_app_win_dispose (GObject *object)
   G_OBJECT_CLASS (peek_app_win_parent_class)->dispose (object);
 }
 
+// 2
 static void
 peek_app_win_init (PeekAppWin *self)
 {

@@ -8,9 +8,11 @@ prefix = get_option('prefix')
 datadir = join_paths(prefix, get_option('datadir'))
 
 gtk = dependency('gtk+-3.0', version: '>= 3.22.0')
+procps = dependency('libprocps')
 
 deps = [
   gtk,
+  procps,
 ]
 
 subdir('data')
