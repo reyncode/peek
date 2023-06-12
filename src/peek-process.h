@@ -1,5 +1,7 @@
 #pragma once
 
+#include "gtk/gtk.h"
+
 #include <stdio.h>
 
-void peek_process_startup (void);
+GtkTreeModel *peek_process_create_proc_model (void);

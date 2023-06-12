@@ -32,9 +32,11 @@ peek_window_init (PeekWindow *self)
   g_type_ensure (PEEK_TYPE_TREE_VIEW);
 
   gtk_widget_init_template (GTK_WIDGET (self));
-  
+
   peek_tree_view_set_search_entry (PEEK_TREE_VIEW (self->peek_tree_view),
                                    GTK_ENTRY (self->search_entry));
+
+  // callbacks for searching by keyboard
 }
 
 static void
