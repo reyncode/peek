@@ -1,13 +1,14 @@
 #include "peek-application.h"
 #include "peek-window.h"
 #include "peek-process.h"
+#include "peek-tree-model.h"
 
 #define APPLICATION_ID "com.github.reyncode.peek"
 
 struct _PeekApplication {
   GtkApplication parent;
 
-  GtkTreeModel *proc_model;
+  GtkTreeModel *model;
 };
 
 G_DEFINE_TYPE (PeekApplication, peek_application, GTK_TYPE_APPLICATION)
@@ -15,13 +16,12 @@ G_DEFINE_TYPE (PeekApplication, peek_application, GTK_TYPE_APPLICATION)
 static void
 peek_application_finalize (GObject *object)
 {
-  
-  PeekApplication *application = PEEK_APPLICATION (object);
+  PeekApplication *app = PEEK_APPLICATION (object);
 
-  if (application->proc_model)
+  if (app->model)
   {
-    g_object_unref (application->proc_model);
-    application->proc_model = NULL;
+    g_object_unref (app->model);
+    app->model = NULL;
   }
 }
 
@@ -36,9 +36,10 @@ peek_application_startup (GApplication *self)
 static void
 peek_application_activate (GApplication *self)
 {
-  PeekWindow *window;
+  PeekApplication *app = PEEK_APPLICATION (self);
+  PeekWindow      *window;
 
-  window = peek_window_new (PEEK_APPLICATION (self));
+  window = peek_window_new (app);
   
   gtk_window_present (GTK_WINDOW (window));
 }
@@ -46,7 +47,8 @@ peek_application_activate (GApplication *self)
 static void
 peek_application_init (PeekApplication *self)
 {
-  self->proc_model = peek_process_create_proc_model ();
+  self->model = peek_tree_model_new ();
+  peek_process_populate_model (GTK_LIST_STORE (self->model));
 }
 
 static void
@@ -59,26 +61,25 @@ peek_application_class_init (PeekApplicationClass *klass)
 }
 
 GtkTreeModel *
-peek_application_get_proc_model (PeekApplication *self)
+peek_application_get_model (PeekApplication *self)
 {
   g_return_val_if_fail (PEEK_APPLICATION (self), NULL);
 
-  return self->proc_model;
+  return self->model;
 }
 
 PeekApplication *
 peek_application_get_instance (void)
 {
-  static PeekApplication *application = NULL;
+  static PeekApplication *app = NULL;
 
-  if (!application)
-    application = g_object_new (PEEK_TYPE_APPLICATION,
-                                "application-id", APPLICATION_ID,
-                                "flags", G_APPLICATION_FLAGS_NONE,
-                                NULL
-    );
+  if (!app)
+    app = g_object_new (PEEK_TYPE_APPLICATION,
+                        "application-id", APPLICATION_ID,
+                        "flags", G_APPLICATION_FLAGS_NONE,
+                        NULL);
 
-  return application;
+  return app;
 }
 
 PeekApplication *

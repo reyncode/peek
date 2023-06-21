@@ -1,4 +1,5 @@
 #include "peek-process.h"
+#include "peek-tree-model.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -8,16 +9,6 @@
 #define PROC_NAME_SIZE 50
 #define EXE_PATH_SIZE 256
 #define SYMBOLIC_PATH_SIZE 80
-
-enum {
-  COLUMN_NAME,
-  COLUMN_ID,
-  COLUMN_USER,
-  COLUMN_MEMORY,
-  COLUMN_PPID,
-  COLUMN_STATE,
-  NUM_COLUMNS
-};
 
 static char *
 peek_process_parse_name_from_path (char *path)
@@ -60,19 +51,13 @@ peek_process_get_executable_name (char *proc_subdir)
 }
 
 /* read directly from /proc/[pid] for process information */
-GtkTreeModel *
-peek_process_create_proc_model (void)
-{
-  GtkListStore *store;
-  GtkTreeIter   iter;
 
-  store = gtk_list_store_new (NUM_COLUMNS,
-                              G_TYPE_STRING,
-                              G_TYPE_UINT,
-                              G_TYPE_STRING,
-                              G_TYPE_ULONG,
-                              G_TYPE_UINT,
-                              G_TYPE_STRING);
+void
+peek_process_populate_model (GtkListStore *store)
+{
+  g_return_if_fail (GTK_IS_LIST_STORE (store));
+
+  GtkTreeIter   iter;
 
   PROCTAB *proc;
   proc_t   proc_info;
@@ -97,6 +82,7 @@ peek_process_create_proc_model (void)
 
     snprintf (proc_state, 2, "%c", proc_info.state);
 
+    // append the data row by row
     gtk_list_store_append (store, &iter);
     gtk_list_store_set (store, &iter,
                         COLUMN_NAME,   proc_name,
@@ -106,11 +92,30 @@ peek_process_create_proc_model (void)
                         COLUMN_PPID,   proc_info.ppid,
                         COLUMN_STATE,  proc_state,
                         -1);
-
+                      
     free (proc_name);
   }
 
   closeproc (proc);
-
-  return GTK_TREE_MODEL (store);
 }
+
+gboolean
+peek_process_updater (gpointer data)
+{
+  // crude approach - scrolls back to top every update
+
+  GtkListStore *store = GTK_LIST_STORE (data);
+  // GtkTreeIter   iter;
+  // PROCTAB      *proc;
+  // proc_t        proc_info;
+
+  gtk_list_store_clear (store);
+
+
+  return G_SOURCE_CONTINUE;
+}
+
+/*
+
+
+*/

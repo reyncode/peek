@@ -9,7 +9,7 @@ G_DECLARE_FINAL_TYPE (PeekApplication, peek_application, PEEK, APPLICATION, GtkA
 
 PeekApplication *peek_application_get_instance (void);
 
-GtkTreeModel *peek_application_get_proc_model (PeekApplication *self);
+GtkTreeModel *peek_application_get_model (PeekApplication *self);
 
 PeekApplication *peek_application_new (void);
 

@@ -3,6 +3,7 @@ sources = [
   'peek-application.c', 'peek-application.h',
   'peek-window.c', 'peek-window.h',
   'peek-tree-view.c', 'peek-tree-view.h',
+  'peek-tree-model.c', 'peek-tree-model.h',
   'peek-process.c', 'peek-process.h',
 ]
 
