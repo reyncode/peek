@@ -1,6 +1,7 @@
 #include "peek-tree-view.h"
 #include "peek-application.h"
 #include "peek-tree-model.h"
+#include "peek-process.h"
 
 struct _PeekTreeView {
   GtkBin        parent;
@@ -11,11 +12,58 @@ struct _PeekTreeView {
 G_DEFINE_TYPE (PeekTreeView, peek_tree_view, GTK_TYPE_BIN)
 
 static void
+memory_cell_data_func (GtkTreeViewColumn *column,
+                       GtkCellRenderer   *cell,
+                       GtkTreeModel      *model,
+                       GtkTreeIter       *iter,
+                       gpointer           data)
+{
+  const guint index = GPOINTER_TO_UINT (data);
+
+  guint64 size;
+  GValue value = { 0 };
+
+  gtk_tree_model_get_value (model, iter, index, &value);
+
+  switch (G_VALUE_TYPE (&value))
+  {
+    case G_TYPE_ULONG:
+      size = g_value_get_ulong (&value);
+      break;
+
+    case G_TYPE_UINT64:
+      size = g_value_get_uint64 (&value);
+      break;
+
+    default:
+      g_assert_not_reached ();
+  }
+
+  g_value_unset (&value);
+
+  if (size == 0)
+  {
+    g_object_set (cell,
+                  "text", ("N/A"),
+                  "style", PANGO_STYLE_ITALIC,
+                  NULL);
+  }
+  else
+  {
+    char *str = "some";
+    g_object_set (cell,
+                  "text", str,
+                  "style", PANGO_STYLE_NORMAL,
+                  NULL);
+    // g_free (str);
+  }
+}
+
+static void
 peek_tree_view_create_columns (GtkTreeView *tree_view)
 {  
   GtkCellRenderer   *renderer;
   GtkTreeViewColumn *column;
-  // gint               i;
 
   // Process Name
   renderer = gtk_cell_renderer_text_new ();
@@ -47,7 +95,14 @@ peek_tree_view_create_columns (GtkTreeView *tree_view)
                                                      renderer,
                                                      "text", COLUMN_MEMORY,
                                                      NULL);
+
+  gtk_tree_view_column_set_cell_data_func (column, renderer,
+                                           memory_cell_data_func, 
+                                           GUINT_TO_POINTER (COLUMN_MEMORY),
+                                           NULL);
+
   gtk_tree_view_append_column (tree_view, column);
+
 
   // PPID
   renderer = gtk_cell_renderer_text_new ();
@@ -63,25 +118,8 @@ peek_tree_view_create_columns (GtkTreeView *tree_view)
                                                      renderer,
                                                      "text", COLUMN_STATE,
                                                      NULL);
+                                                    
   gtk_tree_view_append_column (tree_view, column);
-
-  // for (i = COLUMN_ID; i <= COLUMN_STATE; i++)
-  // {
-  //   switch (i)
-  //   {
-  //     case COLUMN_ID:
-  //       break;
-  //     case COLUMN_USER:
-  //       break;
-  //     case COLUMN_MEMORY:
-  //       break;
-  //     case COLUMN_PPID:
-  //       break;
-  //     case COLUMN_STATE:
-  //       break;
-  //   }
-  // }
-
 
   // callbacks
 }

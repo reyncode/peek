@@ -9,10 +9,12 @@ datadir = join_paths(prefix, get_option('datadir'))
 
 gtk = dependency('gtk+-3.0', version: '>= 3.22.0')
 procps = dependency('libprocps')
+libgtop = dependency('libgtop-2.0')
 
 deps = [
   gtk,
   procps,
+  libgtop,
 ]
 
 subdir('data')
