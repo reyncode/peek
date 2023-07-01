@@ -2,11 +2,6 @@
 #include "peek-process.h"
 #include "peek-tree-model.h"
 
-// to be phased out
-#include <stdlib.h>
-#include <string.h>
-#include <proc/readproc.h>
-
 #include <glib.h>
 #include <glibtop.h>
 #include <glibtop/proclist.h>
@@ -18,100 +13,7 @@
 #include <stdio.h>
 #include <sys/types.h>
 
-#define PROC_NAME_SIZE 50
-#define EXE_PATH_SIZE 256
-#define SYMBOLIC_PATH_SIZE 80
-
-static char *
-peek_process_parse_name_from_path (char *path)
-{
-  char *token;
-  char  name[PROC_NAME_SIZE] = { 0 };
-
-  token = strtok (path, "/");
-
-  while (token != NULL)
-  {
-    strcpy (name, token);
-    token = strtok (NULL, "/");
-  }
-
-  return strndup (name, PROC_NAME_SIZE);
-}
-
-static char *
-peek_process_get_executable_name (char *proc_subdir)
-{
-  char    proc_symbolic_path[SYMBOLIC_PATH_SIZE] = { 0 };
-  char    proc_exe_path[EXE_PATH_SIZE] = { 0 };
-  ssize_t bytes;
-
-  snprintf (proc_symbolic_path, SYMBOLIC_PATH_SIZE, "%s/exe", proc_subdir);
-
-  bytes = readlink (proc_symbolic_path, proc_exe_path, EXE_PATH_SIZE);
-
-  if (bytes != -1)
-  {
-    proc_exe_path[bytes] = '\0';
-
-    return peek_process_parse_name_from_path (proc_exe_path);
-  }
-  else
-  {
-    return NULL;
-  }
-}
-
-/* read directly from /proc/[pid] for process information */
-
-void
-peek_process_populate_model (GtkListStore *store)
-{
-  g_return_if_fail (GTK_IS_LIST_STORE (store));
-
-  GtkTreeIter iter;
-
-  PROCTAB *proc;
-  proc_t   proc_info;
-
-  proc = openproc (PROC_FILLSTATUS | PROC_FILLUSR);
-
-  memset (&proc_info, 0, sizeof(proc_info));
-
-  // cycle through all pids in /proc
-  while (readproc(proc, &proc_info) != NULL)
-  {
-    gchar *proc_name;
-    gchar  proc_state[2] = { 0 };
-    gulong proc_mem = 0;
-
-    // prefer the executable name
-    proc_name = peek_process_get_executable_name (proc->path);
-    if (!proc_name)
-    {
-      proc_name = strndup (proc_info.cmd, 64);
-    }
-
-    snprintf (proc_state, 2, "%c", proc_info.state);
-
-    // append the proc data to a new node in the linked list
-
-    // append the data row by row
-    gtk_list_store_append (store, &iter);
-    gtk_list_store_set (store, &iter,
-                        COLUMN_NAME,   proc_name,
-                        COLUMN_ID,     proc_info.tid,
-                        COLUMN_USER,   proc_info.ruser,
-                        COLUMN_MEMORY, proc_mem,
-                        COLUMN_PPID,   proc_info.ppid,
-                        COLUMN_STATE,  proc_state,
-                        -1);
-                      
-    free (proc_name);
-  }
-
-  closeproc (proc);
-}
+/* read from /proc/[pid] for process information */
 
 static ProcData *
 proc_data_new (pid_t pid)
@@ -121,7 +23,8 @@ proc_data_new (pid_t pid)
   glibtop_proc_uid puid;
 
   proc_data = g_malloc0 (sizeof (ProcData));
-  g_return_val_if_fail (proc_data != NULL, NULL);
+  
+  g_assert (proc_data != NULL);
 
   glibtop_get_proc_state (&pstate, pid);
   glibtop_get_proc_uid (&puid, pid);
@@ -137,22 +40,12 @@ static pid_t *
 key_new (pid_t pid)
 {
   pid_t *key = g_new0 (pid_t, 1);
+
+  g_assert (key != NULL);
+
   *key = pid;
 
   return key;
-}
-
-static void
-for_each (gpointer key,
-          gpointer value,
-          gpointer data)
-{
-
-  ProcData *proc_data = (ProcData *) value;
-
-  g_print ("key: %d\n", *(pid_t *) key);
-  g_print ("value:\nProcData-PID: %d\nProcData-PPID: %d\nProcData-Name: %s\n\n",
-           proc_data->pid, proc_data->ppid, proc_data->name);
 }
 
 static gboolean
@@ -161,7 +54,6 @@ pid_is_still_valid (pid_t    key,
                     guint64  pid_count)
 {
   // for the keys we hold, check the array of pids to verify its existence
-  // if it doesn't exist in the array of pids, remove it from the hash map
 
   for (int i = 0; i < pid_count; i++)
   {
@@ -177,12 +69,16 @@ update_proc_list (PeekApplication *app,
                   pid_t           *pids,
                   guint64          pid_count)
 {
-  GHashTable *proc_table;
-  ProcData   *proc_data;
+  GHashTable   *proc_table;
+  GtkTreeModel *model;
+  GtkListStore *store;
+  ProcData     *proc_data;
   
   proc_table = peek_application_get_proc_table (app);
+  model = peek_application_get_model (app);
+  store = GTK_LIST_STORE (model);
 
-  // Adding & Updating
+  // Inserting & Updating
   for (int i = 0; i < pid_count; i++)
   {
     proc_data = g_hash_table_lookup (proc_table,  &pids[i]);
@@ -194,8 +90,16 @@ update_proc_list (PeekApplication *app,
 
       g_hash_table_insert (proc_table, key, proc_data);
 
-      // insert into tree
-
+      // tree insertion
+      gtk_list_store_append (store, &proc_data->iter);
+      gtk_list_store_set (store, &proc_data->iter,
+                          COLUMN_NAME,   proc_data->name,
+                          COLUMN_ID,     proc_data->pid,
+                          COLUMN_USER,   "User",
+                          COLUMN_MEMORY, 0,
+                          COLUMN_PPID,   proc_data->ppid,
+                          COLUMN_STATE,  "X",
+                          -1);
     }
     else // UPDATE
     {
@@ -203,21 +107,11 @@ update_proc_list (PeekApplication *app,
     }
   }
 
-  // Removing
-  /*
-    for each key, search the array of pids for key match
-
-    pids returned from glibtop_get_proclist are in ascending order
-    the hash table is unsored but we can retrieve a list of key in the form of GList *
-  */
-
-  GList *keys = g_hash_table_get_keys (proc_table); // do not free
-
-  // copy for a mutable list
-
+  // Removal
+  GList *keys = g_hash_table_get_keys (proc_table);
   GList *tmp = g_list_first (keys);
 
-  // some sort algo
+  // some sort algo for keys
 
   while (tmp->next != NULL)
   {
@@ -225,15 +119,16 @@ update_proc_list (PeekApplication *app,
 
     if (!pid_is_still_valid (key, pids, pid_count))
     {
-      g_print ("removing pid %d\n", key);
+      ProcData *proc_data = g_hash_table_lookup (proc_table, &key);
+
+      // tree removal
+      gtk_list_store_remove (store, &proc_data->iter);
+
       g_hash_table_remove (proc_table, &key);
     }
 
     tmp = tmp->next;
   }
-
-  // Display
-  // g_hash_table_foreach (proc_table, for_each, NULL);
 
   g_free (pids);
 }
@@ -252,33 +147,10 @@ peek_process_updater (gpointer data)
   guint64 arg = 0;
 
   pids = glibtop_get_proclist (&proclist, which, arg);
-  g_return_val_if_fail (pids != NULL, G_SOURCE_REMOVE);
+
+  g_assert (pids != NULL);
 
   update_proc_list (app, pids, proclist.number);
 
   return G_SOURCE_CONTINUE;
-  // return G_SOURCE_REMOVE;
 }
-
-/*
-  *GET*
-
-  get a list of all the pids [yes]
-  
-  *FIND*
-
-  compare that list against what the app table has
-  g_hash_table_lookup (...) / g_hash_table_find (...)
-
-  *ACTION*
-
-  ADD: if pid is not in app table, insert into app table, insert into tree model
-  proc_data_new (...)
-  g_hash_table_insert (...)
-
-  REMOVE: if pid is in app table but not in pid list, remove from app table, remove from tree model
-  g_hash_table_remove (...)
-
-  NOTHING: if pid found in pid list and pid found in app table
-
-*/

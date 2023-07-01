@@ -10,7 +10,7 @@ struct _PeekApplication {
   GtkApplication parent;
 
   GtkTreeModel *model;
-  GHashTable   *proc_table; // <pid_t, ProcData>
+  GHashTable   *proc_table;
 
   guint timeout;
 };
@@ -50,6 +50,9 @@ peek_application_startup (GApplication *self)
 
   PeekApplication *app = PEEK_APPLICATION (self);
 
+  // populate immediately
+  peek_process_updater (app);
+
   app->timeout = g_timeout_add_seconds (REFRESH_INTERVAL, peek_process_updater, app);
 }
 
@@ -73,8 +76,6 @@ peek_application_init (PeekApplication *self)
                                             g_int_equal,
                                             g_free,
                                             proc_table_value_destroy);
-
-  peek_process_populate_model (GTK_LIST_STORE (self->model));
 }
 
 static void

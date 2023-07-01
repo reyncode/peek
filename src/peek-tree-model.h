@@ -2,8 +2,6 @@
 
 #include <gtk/gtk.h>
 
-// class specifically for creating the model the processes tree relies on
-
 enum {
   COLUMN_NAME,
   COLUMN_ID,
