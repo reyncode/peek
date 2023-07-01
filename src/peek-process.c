@@ -113,7 +113,6 @@ peek_process_populate_model (GtkListStore *store)
   closeproc (proc);
 }
 
-
 static ProcData *
 proc_data_new (pid_t pid)
 {
@@ -148,11 +147,29 @@ for_each (gpointer key,
           gpointer value,
           gpointer data)
 {
+
   ProcData *proc_data = (ProcData *) value;
 
   g_print ("key: %d\n", *(pid_t *) key);
   g_print ("value:\nProcData-PID: %d\nProcData-PPID: %d\nProcData-Name: %s\n\n",
            proc_data->pid, proc_data->ppid, proc_data->name);
+}
+
+static gboolean
+pid_is_still_valid (pid_t    key,
+                    pid_t   *pids,
+                    guint64  pid_count)
+{
+  // for the keys we hold, check the array of pids to verify its existence
+  // if it doesn't exist in the array of pids, remove it from the hash map
+
+  for (int i = 0; i < pid_count; i++)
+  {
+    if (key == pids[i])
+      return TRUE;
+  }
+
+  return FALSE;
 }
 
 static void
@@ -165,6 +182,7 @@ update_proc_list (PeekApplication *app,
   
   proc_table = peek_application_get_proc_table (app);
 
+  // Adding & Updating
   for (int i = 0; i < pid_count; i++)
   {
     proc_data = g_hash_table_lookup (proc_table,  &pids[i]);
@@ -185,7 +203,37 @@ update_proc_list (PeekApplication *app,
     }
   }
 
-  g_hash_table_foreach (proc_table, for_each, NULL);
+  // Removing
+  /*
+    for each key, search the array of pids for key match
+
+    pids returned from glibtop_get_proclist are in ascending order
+    the hash table is unsored but we can retrieve a list of key in the form of GList *
+  */
+
+  GList *keys = g_hash_table_get_keys (proc_table); // do not free
+
+  // copy for a mutable list
+
+  GList *tmp = g_list_first (keys);
+
+  // some sort algo
+
+  while (tmp->next != NULL)
+  {
+    pid_t key = *(pid_t *) tmp->data;
+
+    if (!pid_is_still_valid (key, pids, pid_count))
+    {
+      g_print ("removing pid %d\n", key);
+      g_hash_table_remove (proc_table, &key);
+    }
+
+    tmp = tmp->next;
+  }
+
+  // Display
+  // g_hash_table_foreach (proc_table, for_each, NULL);
 
   g_free (pids);
 }
@@ -200,7 +248,7 @@ peek_process_updater (gpointer data)
 
   pid_t *pids;
   glibtop_proclist proclist;
-  guint64 which = GLIBTOP_KERN_PROC_UID;
+  guint64 which = GLIBTOP_KERN_PROC_ALL;
   guint64 arg = 0;
 
   pids = glibtop_get_proclist (&proclist, which, arg);
@@ -208,8 +256,8 @@ peek_process_updater (gpointer data)
 
   update_proc_list (app, pids, proclist.number);
 
-  // return G_SOURCE_CONTINUE;
-  return G_SOURCE_REMOVE;
+  return G_SOURCE_CONTINUE;
+  // return G_SOURCE_REMOVE;
 }
 
 /*
