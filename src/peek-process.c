@@ -13,6 +13,11 @@
 #include <stdio.h>
 #include <sys/types.h>
 
+#include <pwd.h>
+
+static const gchar *parse_user_from_uid (guint32 uid);
+static const gchar *parse_proc_state (guint state);
+
 /* read from /proc/[pid] for process information */
 
 static ProcData *
@@ -31,7 +36,9 @@ proc_data_new (pid_t pid)
 
   proc_data->pid = pid;
   proc_data->ppid = puid.ppid;
+  proc_data->uid = puid.uid;
   proc_data->name = g_strdup (pstate.cmd);
+  proc_data->state = pstate.state;
 
   return proc_data;
 }
@@ -46,6 +53,55 @@ key_new (pid_t pid)
   *key = pid;
 
   return key;
+}
+
+static const gchar *
+parse_proc_state (guint state)
+{
+  const gchar *status;
+
+  switch (state)
+  {
+    case GLIBTOP_PROCESS_RUNNING:
+      status = "Running";
+      break;
+    case GLIBTOP_PROCESS_UNINTERRUPTIBLE:
+      status = "Uninterruptible";
+      break;
+    case GLIBTOP_PROCESS_ZOMBIE:
+      status = "Zombie";
+      break;
+    case GLIBTOP_PROCESS_STOPPED:
+      status = "Stopped";
+      break;
+    default:
+      status = "Sleeping";
+      break;
+  }
+
+  return status;
+}
+
+static const gchar *
+parse_user_from_uid (guint32 uid)
+{
+  const gchar *user;
+  struct passwd *pwd;
+
+  pwd = getpwuid (uid);
+
+  if (pwd && pwd->pw_name)
+  {
+    user = pwd->pw_name;
+  }
+  else
+  {
+    gchar buf[5];
+    g_snprintf (buf, 5, "%u", uid);
+    user = buf;
+  }
+
+  return user;
 }
 
 static gboolean
@@ -90,15 +146,16 @@ update_proc_list (PeekApplication *app,
 
       g_hash_table_insert (proc_table, key, proc_data);
 
+
       // tree insertion
       gtk_list_store_append (store, &proc_data->iter);
       gtk_list_store_set (store, &proc_data->iter,
                           COLUMN_NAME,   proc_data->name,
                           COLUMN_ID,     proc_data->pid,
-                          COLUMN_USER,   "User",
+                          COLUMN_USER,   parse_user_from_uid (proc_data->uid),
                           COLUMN_MEMORY, 0,
                           COLUMN_PPID,   proc_data->ppid,
-                          COLUMN_STATE,  "X",
+                          COLUMN_STATE,  parse_proc_state (proc_data->state),
                           -1);
     }
     else // UPDATE
