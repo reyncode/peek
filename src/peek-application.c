@@ -60,7 +60,8 @@ static void
 peek_application_activate (GApplication *self)
 {
   PeekApplication *app = PEEK_APPLICATION (self);
-  PeekWindow      *window;
+
+  PeekWindow *window;
 
   window = peek_window_new (app);
   
@@ -70,7 +71,7 @@ peek_application_activate (GApplication *self)
 static void
 peek_application_init (PeekApplication *self)
 {
-  self->model = peek_tree_model_new ();
+  self->model = peek_tree_model_new (self);
   
   self->proc_table = g_hash_table_new_full (g_int_hash,
                                             g_int_equal,
@@ -98,6 +99,8 @@ peek_application_get_model (PeekApplication *self)
 GHashTable *
 peek_application_get_proc_table (PeekApplication *self)
 {
+  g_return_val_if_fail (PEEK_IS_APPLICATION (self), NULL);
+
   return self->proc_table;
 }
 

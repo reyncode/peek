@@ -1,4 +1,5 @@
 #include "peek-window.h"
+#include "peek-application.h"
 #include "peek-tree-view.h"
 
 struct _PeekWindow {
@@ -13,6 +14,14 @@ struct _PeekWindow {
 };
 
 G_DEFINE_TYPE (PeekWindow, peek_window, GTK_TYPE_APPLICATION_WINDOW)
+
+GtkWidget *
+peek_window_get_search_entry (PeekWindow *window)
+{
+  g_return_val_if_fail (PEEK_IS_WINDOW (window), NULL);
+
+  return window->search_entry;
+}
 
 static void
 peek_window_finalize (GObject *object)
@@ -64,13 +73,19 @@ peek_window_class_init (PeekWindowClass *klass)
 }
 
 PeekWindow *
-peek_window_new (PeekApplication *app)
+peek_window_get_instance (PeekApplication *app)
 {
-  PeekWindow *window;
+  static PeekWindow *window = NULL;
 
   window = g_object_new (PEEK_TYPE_WINDOW,
                          "application", app,
                          NULL);
 
   return window;
+}
+
+PeekWindow *
+peek_window_new (PeekApplication *app)
+{
+  return peek_window_get_instance (app);
 }

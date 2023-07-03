@@ -2,6 +2,8 @@
 
 #include <gtk/gtk.h>
 
+#include "peek-application.h"
+
 enum {
   COLUMN_NAME,
   COLUMN_ID,
@@ -12,4 +14,4 @@ enum {
   NUM_COLUMNS
 };
 
-GtkTreeModel *peek_tree_model_new (void);
+GtkTreeModel *peek_tree_model_new (PeekApplication *app);
