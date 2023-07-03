@@ -54,23 +54,6 @@
           </packing>
         </child>
 
-        <child>
-          <object class="GtkButton" id="process_stop_button">
-            <property name="visible">True</property>
-          
-            <child>
-              <object class="GtkImage">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="icon_name">process-stop-symbolic</property>
-              </object>
-            </child>
-          </object>
-          <packing>
-            <property name="pack_type">start</property>
-          </packing>
-        </child>
-
       </object>
     </child>
 
