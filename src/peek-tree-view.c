@@ -50,12 +50,12 @@ memory_cell_data_func (GtkTreeViewColumn *column,
   }
   else
   {
-    char *str = "some";
+    char *str = g_format_size (size);
     g_object_set (cell,
                   "text", str,
                   "style", PANGO_STYLE_NORMAL,
                   NULL);
-    // g_free (str);
+    g_free (str);
   }
 }
 
@@ -100,7 +100,8 @@ peek_tree_view_create_columns (GtkTreeView *tree_view)
                                            memory_cell_data_func, 
                                            GUINT_TO_POINTER (COLUMN_MEMORY),
                                            NULL);
-
+  // right align
+  g_object_set (G_OBJECT (renderer), "xalign", 1.0f, NULL);
   gtk_tree_view_append_column (tree_view, column);
 
 

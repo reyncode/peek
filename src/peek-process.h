@@ -12,6 +12,11 @@ typedef struct ProcData {
   gchar   *name;
   guint    state;
 
+  guint64  memory; 
+  guint64  memory_vsize;
+  guint64  memory_shared;
+  guint64  memory_resident;
+
   GtkTreeIter iter;
 } ProcData;
 

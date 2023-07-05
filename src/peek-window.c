@@ -34,6 +34,14 @@ on_key_press_event (GtkWidget *widget,
 }
 
 static void
+search_entry_changed (GtkEditable *self,
+                      gpointer     data)
+{
+  // do the refiltering
+  // gtk_tree_model_filter_refilter
+}
+
+static void
 peek_window_finalize (GObject *object)
 {
   G_OBJECT_CLASS (peek_window_parent_class)->finalize (object);
@@ -82,6 +90,9 @@ peek_window_class_init (PeekWindowClass *klass)
   // callbacks
   gtk_widget_class_bind_template_callback (GTK_WIDGET_CLASS (klass),
                                            on_key_press_event);
+
+  gtk_widget_class_bind_template_callback (GTK_WIDGET_CLASS (klass),
+                                           search_entry_changed);
 }
 
 PeekWindow *

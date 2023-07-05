@@ -8,6 +8,7 @@
 #include <glibtop/procstate.h>
 #include <glibtop/proctime.h>
 #include <glibtop/procuid.h>
+#include <glibtop/procmem.h>
 
 #include <unistd.h>
 #include <stdio.h>
@@ -20,12 +21,33 @@ static const gchar *parse_proc_state (guint state);
 
 /* read from /proc/[pid] for process information */
 
+static void
+proc_data_update (ProcData *proc_data)
+{
+  glibtop_proc_state pstate;
+  glibtop_proc_uid puid;
+  glibtop_proc_mem pmem;
+  
+  glibtop_get_proc_state (&pstate, proc_data->pid);
+  glibtop_get_proc_uid (&puid, proc_data->pid);
+  glibtop_get_proc_mem (&pmem, proc_data->pid);
+
+  proc_data->uid = puid.uid;
+  proc_data->state = pstate.state;
+
+  proc_data->memory_vsize = pmem.vsize;
+  proc_data->memory_shared = pmem.share;
+  proc_data->memory_resident = pmem.resident;
+  proc_data->memory = pmem.resident - pmem.share;
+}
+
 static ProcData *
 proc_data_new (pid_t pid)
 {
   ProcData *proc_data; 
   glibtop_proc_state pstate;
   glibtop_proc_uid puid;
+  glibtop_proc_mem pmem;
 
   proc_data = g_malloc0 (sizeof (ProcData));
   
@@ -33,12 +55,19 @@ proc_data_new (pid_t pid)
 
   glibtop_get_proc_state (&pstate, pid);
   glibtop_get_proc_uid (&puid, pid);
+  glibtop_get_proc_mem (&pmem, pid);
 
   proc_data->pid = pid;
   proc_data->ppid = puid.ppid;
   proc_data->uid = puid.uid;
+
   proc_data->name = g_strdup (pstate.cmd);
   proc_data->state = pstate.state;
+
+  proc_data->memory_vsize = pmem.vsize;
+  proc_data->memory_shared = pmem.share;
+  proc_data->memory_resident = pmem.resident;
+  proc_data->memory = pmem.resident - pmem.share;
 
   return proc_data;
 }
@@ -153,14 +182,20 @@ update_proc_list (PeekApplication *app,
                           COLUMN_NAME,   proc_data->name,
                           COLUMN_ID,     proc_data->pid,
                           COLUMN_USER,   parse_user_from_uid (proc_data->uid),
-                          COLUMN_MEMORY, 0,
+                          COLUMN_MEMORY, proc_data->memory,
                           COLUMN_PPID,   proc_data->ppid,
                           COLUMN_STATE,  parse_proc_state (proc_data->state),
                           -1);
     }
     else // UPDATE
     {
-      // do the update
+      proc_data_update (proc_data);
+
+      gtk_list_store_set (store, &proc_data->iter,
+                          COLUMN_USER,   parse_user_from_uid (proc_data->uid),
+                          COLUMN_MEMORY, proc_data->memory,
+                          COLUMN_STATE,  parse_proc_state (proc_data->state),
+                          -1);
     }
   }
 
