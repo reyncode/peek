@@ -30,6 +30,12 @@ on_key_press_event (GtkWidget *widget,
 {
   PeekWindow *window = PEEK_WINDOW (data);
 
+  // do something with the key
+  // if (event->key.keyval == GDK_KEY_Escape)
+
+  if (!gtk_widget_is_focus (window->search_entry))
+    gtk_entry_grab_focus_without_selecting (GTK_ENTRY (window->search_entry));
+
   return gtk_search_entry_handle_event (GTK_SEARCH_ENTRY (window->search_entry), event);
 }
 
