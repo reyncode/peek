@@ -15,10 +15,11 @@ search_query_is_found (GtkTreeModel *model,
   pid_t  pid;
 
   GRegex *regex;
+  GMatchInfo *match_info;
   gchar **tokens;
   gchar *pattern;
 
-  gboolean found = TRUE;
+  gboolean found;
 
   gtk_tree_model_get (model, iter,
                       COLUMN_NAME, &name,
@@ -36,15 +37,22 @@ search_query_is_found (GtkTreeModel *model,
                        G_REGEX_MATCH_PARTIAL,
                        NULL);
   
-  g_regex_match (regex, query, G_REGEX_MATCH_PARTIAL, NULL);
+  g_regex_match (regex, query, G_REGEX_MATCH_PARTIAL, &match_info);
 
-  // cycle through found
+  while (g_match_info_matches (match_info))
+  {
+    g_match_info_fetch_named (match_info, name);
+    found = (name && g_match_info_fetch_named (match_info, name));
+
+    if (found)
+      break;
+  }
 
   g_strfreev (tokens);
-  g_free (pattern);
-  g_free (name);
-  g_free (user);
-  g_free (id);
+  g_clear_pointer (&pattern, g_free);
+  g_clear_pointer (&name, g_free);
+  g_clear_pointer (&user, g_free);
+  g_clear_pointer (&id, g_free);
 
   g_regex_unref (regex);
 
@@ -99,12 +107,9 @@ peek_tree_model_new (PeekApplication *app)
                               G_TYPE_UINT,      // PPID
                               G_TYPE_STRING);   // Status
 
-  // caught in infinite loop
 
   // filter = GTK_TREE_MODEL_FILTER (gtk_tree_model_filter_new (GTK_TREE_MODEL (store), NULL));
   // gtk_tree_model_filter_set_visible_func (filter, search_child_is_visible, app, NULL);
-
-  // GtkTreeModelSort
 
   return GTK_TREE_MODEL (store);
 }
