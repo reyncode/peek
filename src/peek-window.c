@@ -107,19 +107,9 @@ peek_window_class_init (PeekWindowClass *klass)
 }
 
 PeekWindow *
-peek_window_get_instance (PeekApplication *app)
-{
-  static PeekWindow *window = NULL;
-
-  window = g_object_new (PEEK_TYPE_WINDOW,
-                         "application", app,
-                         NULL);
-
-  return window;
-}
-
-PeekWindow *
 peek_window_new (PeekApplication *app)
 {
-  return peek_window_get_instance (app);
+  return g_object_new (PEEK_TYPE_WINDOW,
+                         "application", app,
+                         NULL);
 }
