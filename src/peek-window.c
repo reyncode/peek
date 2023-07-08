@@ -43,8 +43,13 @@ static void
 search_entry_changed (GtkEditable *self,
                       gpointer     data)
 {
-  // do the refiltering
-  // gtk_tree_model_filter_refilter
+  PeekApplication *app;
+  GtkTreeModel *model;
+
+  app = peek_application_get_instance ();
+  model = peek_application_get_model (app);
+
+  gtk_tree_model_filter_refilter (GTK_TREE_MODEL_FILTER (model));
 }
 
 static void

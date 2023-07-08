@@ -155,13 +155,15 @@ update_proc_list (PeekApplication *app,
                   guint64          pid_count)
 {
   GHashTable   *proc_table;
-  GtkTreeModel *model;
-  GtkListStore *store;
+  GtkTreeModel *parent; // GtkTreeModelFilter
+  GtkTreeModel *child;  // GtkListStore
   ProcData     *proc_data;
   
   proc_table = peek_application_get_proc_table (app);
-  model = peek_application_get_model (app);
-  store = GTK_LIST_STORE (model);
+  parent = peek_application_get_model (app);
+
+  // make a call to get child inside filter layer wrapper
+  child = gtk_tree_model_filter_get_model (GTK_TREE_MODEL_FILTER (parent));
 
   // Inserting & Updating
   for (int i = 0; i < pid_count; i++)
@@ -175,10 +177,9 @@ update_proc_list (PeekApplication *app,
 
       g_hash_table_insert (proc_table, key, proc_data);
 
-
       // tree insertion
-      gtk_list_store_append (store, &proc_data->iter);
-      gtk_list_store_set (store, &proc_data->iter,
+      gtk_list_store_append (GTK_LIST_STORE (child), &proc_data->iter);
+      gtk_list_store_set (GTK_LIST_STORE (child), &proc_data->iter,
                           COLUMN_NAME,   proc_data->name,
                           COLUMN_ID,     proc_data->pid,
                           COLUMN_USER,   parse_user_from_uid (proc_data->uid),
@@ -191,7 +192,7 @@ update_proc_list (PeekApplication *app,
     {
       proc_data_update (proc_data);
 
-      gtk_list_store_set (store, &proc_data->iter,
+      gtk_list_store_set (GTK_LIST_STORE (child), &proc_data->iter,
                           COLUMN_USER,   parse_user_from_uid (proc_data->uid),
                           COLUMN_MEMORY, proc_data->memory,
                           COLUMN_STATE,  parse_proc_state (proc_data->state),
@@ -214,7 +215,7 @@ update_proc_list (PeekApplication *app,
       ProcData *proc_data = g_hash_table_lookup (proc_table, &key);
 
       // tree removal
-      gtk_list_store_remove (store, &proc_data->iter);
+      gtk_list_store_remove (GTK_LIST_STORE (child), &proc_data->iter);
 
       g_hash_table_remove (proc_table, &key);
     }
