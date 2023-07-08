@@ -59,46 +59,28 @@
 //   return found;
 // }
 
-// static gboolean
-// search_child_is_visible (GtkTreeModel *model,
-//                          GtkTreeIter  *iter,
-//                          gpointer      data)
-// {
-//   PeekApplication *app = PEEK_APPLICATION (data);
-//   PeekWindow *window;
-
-//   GtkWidget *entry;
-//   GtkTreePath *path;
-
-//   window = peek_window_get_instance (app);
-
-//   entry = peek_window_get_search_entry (window);
-//   path = gtk_tree_model_get_path (model, iter);
-
-//   const gchar *query;
-//   gboolean     found;
-
-//   query = gtk_entry_get_text (GTK_ENTRY (entry));
-
-//   if (g_strcmp0 (query, "") == 0)
-//   {
-//     gtk_tree_path_free (path);
-//     return TRUE;
-//   }
-
-//   found = search_query_is_found (model, iter, query);
-
-//   gtk_tree_path_free (path);
-
-//   return found;
-// }
-
 static gboolean
-mock_is_visible (GtkTreeModel *model,
-                 GtkTreeIter  *iter,
-                 gpointer      data)
+search_child_is_visible (GtkTreeModel *model,
+                         GtkTreeIter  *iter,
+                         gpointer      data)
 {
-  return TRUE;
+  PeekApplication *app = PEEK_APPLICATION (data);
+  GtkEntry        *entry;
+  const gchar     *query;
+  gboolean         found = FALSE;
+
+  entry = GTK_ENTRY (peek_application_get_search_entry (app));
+  if (!entry)
+    return TRUE;
+
+  query = gtk_entry_get_text (entry);
+
+  if (g_strcmp0 (query, "") == 0)
+    return TRUE;
+
+  // found = search_query_is_found (model, iter, query);
+
+  return found;
 }
 
 GtkTreeModel *
@@ -116,7 +98,7 @@ peek_tree_model_new (PeekApplication *app)
                                               G_TYPE_STRING));   // Status
 
   filter = GTK_TREE_MODEL_FILTER (gtk_tree_model_filter_new (model, NULL));
-  gtk_tree_model_filter_set_visible_func (filter, mock_is_visible, app, NULL);
+  gtk_tree_model_filter_set_visible_func (filter, search_child_is_visible, app, NULL);
 
   return GTK_TREE_MODEL (filter);
 }

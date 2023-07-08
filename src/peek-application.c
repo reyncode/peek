@@ -11,6 +11,7 @@ struct _PeekApplication {
 
   GtkTreeModel *model;
   GHashTable   *proc_table;
+  GtkWidget    *search_entry;
 
   guint timeout;
 };
@@ -64,6 +65,8 @@ peek_application_activate (GApplication *self)
   PeekWindow *window;
 
   window = peek_window_new (app);
+
+  app->search_entry = peek_window_get_search_entry (window);
   
   gtk_window_present (GTK_WINDOW (window));
 }
@@ -77,6 +80,8 @@ peek_application_init (PeekApplication *self)
                                             g_int_equal,
                                             g_free,
                                             proc_table_value_destroy);
+
+  self->search_entry = NULL;
 }
 
 static void
@@ -102,6 +107,18 @@ peek_application_get_proc_table (PeekApplication *self)
   g_return_val_if_fail (PEEK_IS_APPLICATION (self), NULL);
 
   return self->proc_table;
+}
+
+GtkWidget *
+peek_application_get_search_entry (PeekApplication *self)
+{
+  // to speed up filtering and refiltering a search over the tree model,
+  // we are providing a reference directly to application so that we
+  // can speed up entry text retrieval in the filter func
+
+  g_return_val_if_fail (PEEK_IS_APPLICATION (self), NULL);
+
+  return self->search_entry;
 }
 
 PeekApplication *
