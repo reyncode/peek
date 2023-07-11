@@ -4,60 +4,47 @@
 #include "peek-window.h"
 #include "peek-tree-model.h"
 
-// static gboolean
-// search_query_is_found (GtkTreeModel *model,
-//                        GtkTreeIter  *iter,
-//                        const gchar  *query)
-// {
-//   gchar *name;
-//   gchar *user;
-//   gchar *id;
-//   pid_t  pid;
+static gboolean
+filter_for_query (GtkTreeModel *model,
+                  GtkTreeIter  *iter,
+                  const gchar  *query)
+{
+  gchar   *name;
+  gchar   *user;
+  gchar   *id;
+  pid_t    pid;
+  GRegex  *regex;
+  GError  *error = NULL;
+  gboolean found = FALSE;
 
-//   GRegex *regex;
-//   GMatchInfo *match_info;
-//   gchar **tokens;
-//   gchar *pattern;
+  gtk_tree_model_get (model, iter,
+                      COLUMN_NAME, &name,
+                      COLUMN_USER, &user,
+                      COLUMN_ID,   &pid,
+                      -1);
 
-//   gboolean found;
+  id = g_strdup_printf ("%d", pid);
 
-//   gtk_tree_model_get (model, iter,
-//                       COLUMN_NAME, &name,
-//                       COLUMN_USER, &user,
-//                       COLUMN_ID,   &pid,
-//                       -1);
+  regex = g_regex_new (query,
+                       G_REGEX_CASELESS, 
+                       G_REGEX_MATCH_PARTIAL,
+                       &error);
 
-//   id = g_strdup_printf ("%d", pid);
+  if (error) // TODO better debugging
+    g_print ("Error: %s\n", error->message);
 
-//   tokens = g_strsplit_set (query, " |", -1);
-//   pattern = g_strjoinv ("|", tokens);
+  found = (name && g_regex_match (regex, name, G_REGEX_MATCH_PARTIAL, NULL)) ||
+          (user && g_regex_match (regex, user, G_REGEX_MATCH_PARTIAL, NULL)) ||
+          (id && g_regex_match (regex, id, G_REGEX_MATCH_PARTIAL, NULL));
 
-//   regex = g_regex_new (pattern,
-//                        G_REGEX_CASELESS, 
-//                        G_REGEX_MATCH_PARTIAL,
-//                        NULL);
-  
-//   g_regex_match (regex, query, G_REGEX_MATCH_PARTIAL, &match_info);
+  g_clear_pointer (&name, g_free);
+  g_clear_pointer (&user, g_free);
+  g_clear_pointer (&id, g_free);
+  g_clear_error (&error);
+  g_regex_unref (regex);
 
-//   while (g_match_info_matches (match_info))
-//   {
-//     g_match_info_fetch_named (match_info, name);
-//     found = (name && g_match_info_fetch_named (match_info, name));
-
-//     if (found)
-//       break;
-//   }
-
-//   g_strfreev (tokens);
-//   g_clear_pointer (&pattern, g_free);
-//   g_clear_pointer (&name, g_free);
-//   g_clear_pointer (&user, g_free);
-//   g_clear_pointer (&id, g_free);
-
-//   g_regex_unref (regex);
-
-//   return found;
-// }
+  return found;
+}
 
 static gboolean
 search_child_is_visible (GtkTreeModel *model,
@@ -78,7 +65,7 @@ search_child_is_visible (GtkTreeModel *model,
   if (g_strcmp0 (query, "") == 0)
     return TRUE;
 
-  // found = search_query_is_found (model, iter, query);
+  found = filter_for_query (model, iter, query);
 
   return found;
 }
@@ -95,7 +82,7 @@ peek_tree_model_new (PeekApplication *app)
                                               G_TYPE_STRING,    // User
                                               G_TYPE_ULONG,     // Memory
                                               G_TYPE_UINT,      // PPID
-                                              G_TYPE_STRING));   // Status
+                                              G_TYPE_STRING));  // Status
 
   filter = GTK_TREE_MODEL_FILTER (gtk_tree_model_filter_new (model, NULL));
   gtk_tree_model_filter_set_visible_func (filter, search_child_is_visible, app, NULL);
