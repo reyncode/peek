@@ -155,7 +155,7 @@ update_proc_list (PeekApplication *app,
                   guint64          pid_count)
 {
   GHashTable   *proc_table;
-  GtkTreeModel *parent; // GtkTreeModelFilter
+  GtkTreeModel *parent; // GtkTreeModelSort
   GtkTreeModel *child;  // GtkListStore
   ProcData     *proc_data;
   
@@ -163,7 +163,7 @@ update_proc_list (PeekApplication *app,
   parent = peek_application_get_model (app);
 
   // make a call to get child inside filter layer wrapper
-  child = gtk_tree_model_filter_get_model (GTK_TREE_MODEL_FILTER (parent));
+  child = gtk_tree_model_filter_get_model (GTK_TREE_MODEL_FILTER (gtk_tree_model_sort_get_model (GTK_TREE_MODEL_SORT (parent))));
 
   // Inserting & Updating
   for (int i = 0; i < pid_count; i++)

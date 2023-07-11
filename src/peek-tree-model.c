@@ -74,6 +74,7 @@ GtkTreeModel *
 peek_tree_model_new (PeekApplication *app)
 {
   GtkTreeModel *model;
+  GtkTreeModelSort *sort;
   GtkTreeModelFilter *filter;
 
   model = GTK_TREE_MODEL (gtk_list_store_new (NUM_COLUMNS,
@@ -87,5 +88,7 @@ peek_tree_model_new (PeekApplication *app)
   filter = GTK_TREE_MODEL_FILTER (gtk_tree_model_filter_new (model, NULL));
   gtk_tree_model_filter_set_visible_func (filter, search_child_is_visible, app, NULL);
 
-  return GTK_TREE_MODEL (filter);
+  sort = GTK_TREE_MODEL_SORT (gtk_tree_model_sort_new_with_model (GTK_TREE_MODEL (filter)));
+
+  return GTK_TREE_MODEL (sort);
 }
