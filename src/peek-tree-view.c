@@ -72,6 +72,7 @@ peek_tree_view_create_columns (GtkTreeView *tree_view)
                                                      "text", COLUMN_NAME,
                                                      NULL);
   gtk_tree_view_column_set_sort_column_id (column, COLUMN_NAME);
+  gtk_tree_view_column_set_reorderable (column, TRUE);
   gtk_tree_view_append_column (tree_view, column);
 
   // ID
@@ -81,6 +82,7 @@ peek_tree_view_create_columns (GtkTreeView *tree_view)
                                                      "text", COLUMN_ID,
                                                      NULL);
   gtk_tree_view_column_set_sort_column_id (column, COLUMN_ID);
+  gtk_tree_view_column_set_reorderable (column, TRUE);
   gtk_tree_view_append_column (tree_view, column);
 
   // User
@@ -90,6 +92,7 @@ peek_tree_view_create_columns (GtkTreeView *tree_view)
                                                      "text", COLUMN_USER,
                                                      NULL);
   gtk_tree_view_column_set_sort_column_id (column, COLUMN_USER);
+  gtk_tree_view_column_set_reorderable (column, TRUE);
   gtk_tree_view_append_column (tree_view, column);
 
   // Memory
@@ -106,6 +109,7 @@ peek_tree_view_create_columns (GtkTreeView *tree_view)
   // right align
   g_object_set (G_OBJECT (renderer), "xalign", 1.0f, NULL);
   gtk_tree_view_column_set_sort_column_id (column, COLUMN_MEMORY);
+  gtk_tree_view_column_set_reorderable (column, TRUE);
   gtk_tree_view_append_column (tree_view, column);
 
 
@@ -116,6 +120,7 @@ peek_tree_view_create_columns (GtkTreeView *tree_view)
                                                      "text", COLUMN_PPID,
                                                      NULL);
   gtk_tree_view_column_set_sort_column_id (column, COLUMN_PPID);
+  gtk_tree_view_column_set_reorderable (column, TRUE);
   gtk_tree_view_append_column (tree_view, column);
 
   // State
@@ -126,6 +131,7 @@ peek_tree_view_create_columns (GtkTreeView *tree_view)
                                                      NULL);
                                                     
   gtk_tree_view_column_set_sort_column_id (column, COLUMN_STATE);
+  gtk_tree_view_column_set_reorderable (column, TRUE);
   gtk_tree_view_append_column (tree_view, column);
 
   // callbacks

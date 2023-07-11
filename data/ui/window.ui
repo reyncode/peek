@@ -20,8 +20,8 @@
 
   <template class="PeekWindow" parent="GtkApplicationWindow">
     <property name="title" translatable="yes">Peek</property>
-    <property name="default-width">600</property>
-    <property name="default-height">400</property>
+    <property name="default-width">750</property>
+    <property name="default-height">500</property>
     <signal name="key-press-event" handler="on_key_press_event"/>
 
     <child type="titlebar">
