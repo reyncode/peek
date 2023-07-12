@@ -82,6 +82,7 @@ peek_tree_model_new (PeekApplication *app)
                                               G_TYPE_UINT,      // PID
                                               G_TYPE_STRING,    // User
                                               G_TYPE_ULONG,     // Memory
+                                              G_TYPE_DOUBLE,    // CPU %
                                               G_TYPE_UINT,      // PPID
                                               G_TYPE_STRING));  // Status
 

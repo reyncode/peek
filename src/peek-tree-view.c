@@ -12,11 +12,11 @@ struct _PeekTreeView {
 G_DEFINE_TYPE (PeekTreeView, peek_tree_view, GTK_TYPE_BIN)
 
 static void
-memory_cell_data_func (GtkTreeViewColumn *column,
-                       GtkCellRenderer   *cell,
-                       GtkTreeModel      *model,
-                       GtkTreeIter       *iter,
-                       gpointer           data)
+size_cell_data_func (GtkTreeViewColumn *column,
+                     GtkCellRenderer   *cell,
+                     GtkTreeModel      *model,
+                     GtkTreeIter       *iter,
+                     gpointer           data)
 {
   const guint index = GPOINTER_TO_UINT (data);
 
@@ -57,6 +57,29 @@ memory_cell_data_func (GtkTreeViewColumn *column,
                   NULL);
     g_free (str);
   }
+}
+
+static void
+percentage_cell_data_func (GtkTreeViewColumn *column,
+                           GtkCellRenderer   *cell,
+                           GtkTreeModel      *model,
+                           GtkTreeIter       *iter,
+                           gpointer           data)
+{
+  const guint index = GPOINTER_TO_UINT (data);
+
+  gdouble size;
+  GValue value = { 0 };
+
+  gtk_tree_model_get_value (model, iter, index, &value);
+
+  size = g_value_get_double (&value);
+  g_value_unset (&value);
+
+  char *str = g_strdup_printf ("%.2f", size);
+
+  g_object_set (cell, "text", str, NULL);
+  g_free (str);
 }
 
 static void
@@ -103,7 +126,7 @@ peek_tree_view_create_columns (GtkTreeView *tree_view)
                                                      NULL);
 
   gtk_tree_view_column_set_cell_data_func (column, renderer,
-                                           memory_cell_data_func, 
+                                           size_cell_data_func, 
                                            GUINT_TO_POINTER (COLUMN_MEMORY),
                                            NULL);
   // right align
@@ -111,7 +134,23 @@ peek_tree_view_create_columns (GtkTreeView *tree_view)
   gtk_tree_view_column_set_sort_column_id (column, COLUMN_MEMORY);
   gtk_tree_view_column_set_reorderable (column, TRUE);
   gtk_tree_view_append_column (tree_view, column);
+  
+  // CPU %
+  renderer = gtk_cell_renderer_text_new ();
+  column = gtk_tree_view_column_new_with_attributes ("CPU",
+                                                     renderer,
+                                                     "text", COLUMN_CPU_P,
+                                                     NULL);
 
+  gtk_tree_view_column_set_cell_data_func (column, renderer,
+                                           percentage_cell_data_func, 
+                                           GUINT_TO_POINTER (COLUMN_CPU_P),
+                                           NULL);
+  // right align
+  g_object_set (G_OBJECT (renderer), "xalign", 1.0f, NULL);
+  gtk_tree_view_column_set_sort_column_id (column, COLUMN_CPU_P);
+  gtk_tree_view_column_set_reorderable (column, TRUE);
+  gtk_tree_view_append_column (tree_view, column);
 
   // PPID
   renderer = gtk_cell_renderer_text_new ();

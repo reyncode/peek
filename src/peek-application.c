@@ -3,6 +3,9 @@
 #include "peek-process.h"
 #include "peek-tree-model.h"
 
+#include <glibtop.h>
+#include <glibtop/sysinfo.h>
+
 #define APPLICATION_ID "com.github.reyncode.peek"
 #define REFRESH_INTERVAL 2
 
@@ -13,8 +16,14 @@ struct _PeekApplication {
   GHashTable   *proc_table;
   GtkWidget    *search_entry;
 
+  guint         cores;
+  guint64       cpu_time_total;
+  guint64       cpu_time_total_last;
+
   guint timeout;
 };
+
+// consider making private and public members
 
 G_DEFINE_TYPE (PeekApplication, peek_application, GTK_TYPE_APPLICATION)
 
@@ -71,6 +80,18 @@ peek_application_activate (GApplication *self)
   gtk_window_present (GTK_WINDOW (window));
 }
 
+static guint
+get_system_core_count ()
+{
+  const glibtop_sysinfo *info;
+
+  info = glibtop_get_sysinfo ();
+
+  g_assert (info != NULL);
+
+  return info->ncpu;
+}
+
 static void
 peek_application_init (PeekApplication *self)
 {
@@ -82,6 +103,11 @@ peek_application_init (PeekApplication *self)
                                             proc_table_value_destroy);
 
   self->search_entry = NULL;
+
+  self->cores = get_system_core_count ();
+
+  self->cpu_time_total = 0;
+  self->cpu_time_total_last = 0;
 }
 
 static void
@@ -108,6 +134,49 @@ peek_application_get_proc_table (PeekApplication *self)
 
   return self->proc_table;
 }
+
+guint
+peek_application_get_core_count (PeekApplication *self)
+{
+  g_return_val_if_fail (PEEK_IS_APPLICATION (self), 0);
+
+  return self->cores;
+}
+
+guint64
+peek_application_get_cpu_time_total (PeekApplication *self)
+{
+  g_return_val_if_fail (PEEK_IS_APPLICATION (self), 0);
+
+  return self->cpu_time_total;
+}
+
+void
+peek_application_set_cpu_time_total (PeekApplication *self,
+                                     guint64          value)
+{
+  g_return_if_fail (PEEK_IS_APPLICATION (self));
+
+  self->cpu_time_total = value;
+}
+
+guint64
+peek_application_get_cpu_time_total_last (PeekApplication *self)
+{
+  g_return_val_if_fail (PEEK_IS_APPLICATION (self), 0);
+
+  return self->cpu_time_total_last;
+}
+
+void
+peek_application_set_cpu_time_total_last (PeekApplication *self,
+                                          guint64          value)
+{
+  g_return_if_fail (PEEK_IS_APPLICATION (self));
+
+  self->cpu_time_total_last = value;
+}
+
 
 GtkWidget *
 peek_application_get_search_entry (PeekApplication *self)

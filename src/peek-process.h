@@ -17,6 +17,9 @@ typedef struct ProcData {
   guint64  memory_shared;
   guint64  memory_resident;
 
+  guint64  cpu_time;
+  gdouble  cpu_usage;
+
   GtkTreeIter iter;
 } ProcData;
 
