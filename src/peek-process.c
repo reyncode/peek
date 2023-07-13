@@ -47,16 +47,20 @@ proc_data_update (ProcData        *proc_data,
   else
     proc_data->state = pstate.state;
 
-  // cpu
-  proc_data->cpu_time = ptime.rtime;
-
+  // TODO - bug somewhere making the % exceed 100% at times
+  // cpu %
   guint cpu_scale = 100;
-  cpu_scale *= peek_application_get_core_count (app);
+  guint cores = peek_application_get_core_count (app);
+
+  cpu_scale *= cores;
 
   guint64 cpu_time_total = peek_application_get_cpu_time_total (app);
 
   proc_data->cpu_usage = (gdouble) time_dif * cpu_scale / cpu_time_total;
   proc_data->cpu_usage = MIN (proc_data->cpu_usage, cpu_scale);
+
+  // cpu - time
+  proc_data->cpu_time = ptime.rtime;
 
   // memory
   proc_data->memory_vsize = pmem.vsize;
@@ -86,7 +90,7 @@ proc_data_new (pid_t pid)
   proc_data->pid = pid;
   proc_data->ppid = puid.ppid;
   proc_data->uid = puid.uid;
-  proc_data->cpu_time = ptime.rtime;
+  proc_data->cpu_time = ptime.rtime; // set the start time
   proc_data->cpu_usage = 0;
 
   proc_data->name = g_strdup (pstate.cmd);
@@ -104,13 +108,16 @@ static void
 update_cpu_timing_values (PeekApplication *app)
 {
   glibtop_cpu cpu;
+  guint64     cpu_time_total;
   guint64     cpu_time_total_last;
 
   glibtop_get_cpu (&cpu);
+  cpu_time_total_last = peek_application_get_cpu_time_total_last (app);
 
-  cpu_time_total_last = peek_application_get_cpu_time_total (app);
+  cpu_time_total = MAX (cpu.total - cpu_time_total_last, 1);
+  cpu_time_total_last = cpu.total;
 
-  peek_application_set_cpu_time_total (app, cpu.total);
+  peek_application_set_cpu_time_total (app, cpu_time_total);
   peek_application_set_cpu_time_total_last (app, cpu_time_total_last);
 }
 
