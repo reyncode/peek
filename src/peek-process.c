@@ -38,6 +38,7 @@ proc_data_update (ProcData        *proc_data,
   glibtop_get_proc_time (&ptime, proc_data->pid);
 
   proc_data->uid = puid.uid;
+  proc_data->nice = puid.nice;
 
   guint64 time_dif = ptime.rtime - proc_data->cpu_time;
 
@@ -47,7 +48,7 @@ proc_data_update (ProcData        *proc_data,
   else
     proc_data->state = pstate.state;
 
-  // TODO - bug somewhere making the % exceed 100% at times
+  // TODO - bug / somewhere making the % exceed 100% at times
   // cpu %
   guint cpu_scale = 100;
   guint cores = peek_application_get_core_count (app);
@@ -88,8 +89,11 @@ proc_data_new (pid_t pid)
   glibtop_get_proc_time (&ptime, pid);
 
   proc_data->pid = pid;
+
   proc_data->ppid = puid.ppid;
   proc_data->uid = puid.uid;
+  proc_data->nice = puid.nice;
+
   proc_data->cpu_time = ptime.rtime; // set the start time
   proc_data->cpu_usage = 0;
 
@@ -239,6 +243,7 @@ update_proc_list (PeekApplication *app,
                           COLUMN_CPU_P,  proc_data->cpu_usage,
                           COLUMN_PPID,   proc_data->ppid,
                           COLUMN_STATE,  parse_proc_state (proc_data->state),
+                          COLUMN_NICE,   proc_data->nice,
                           -1);
     }
     else // UPDATE
@@ -250,6 +255,7 @@ update_proc_list (PeekApplication *app,
                           COLUMN_MEMORY, proc_data->memory,
                           COLUMN_CPU_P,  proc_data->cpu_usage,
                           COLUMN_STATE,  parse_proc_state (proc_data->state),
+                          COLUMN_NICE,   proc_data->nice,
                           -1);
     }
   }

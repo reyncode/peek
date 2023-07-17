@@ -173,7 +173,16 @@ peek_tree_view_create_columns (GtkTreeView *tree_view)
   gtk_tree_view_column_set_reorderable (column, TRUE);
   gtk_tree_view_append_column (tree_view, column);
 
-  // callbacks
+  // Nice
+  renderer = gtk_cell_renderer_text_new ();
+  column = gtk_tree_view_column_new_with_attributes ("Nice",
+                                                     renderer,
+                                                     "text", COLUMN_NICE,
+                                                     NULL);
+                                                    
+  gtk_tree_view_column_set_sort_column_id (column, COLUMN_NICE);
+  gtk_tree_view_column_set_reorderable (column, TRUE);
+  gtk_tree_view_append_column (tree_view, column);
 }
 
 void

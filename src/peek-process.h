@@ -9,8 +9,11 @@ typedef struct ProcData {
   pid_t    pid;
   pid_t    ppid;
   guint32  uid;
+
   gchar   *name;
+
   guint    state;
+  gint     nice;
 
   guint64  memory; 
   guint64  memory_vsize;

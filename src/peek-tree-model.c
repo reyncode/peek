@@ -84,7 +84,8 @@ peek_tree_model_new (PeekApplication *app)
                                               G_TYPE_ULONG,     // Memory
                                               G_TYPE_DOUBLE,    // CPU %
                                               G_TYPE_UINT,      // PPID
-                                              G_TYPE_STRING));  // Status
+                                              G_TYPE_STRING,    // Status
+                                              G_TYPE_INT));     // Nice
 
   filter = GTK_TREE_MODEL_FILTER (gtk_tree_model_filter_new (model, NULL));
   gtk_tree_model_filter_set_visible_func (filter, search_child_is_visible, app, NULL);
