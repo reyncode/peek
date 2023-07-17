@@ -82,11 +82,72 @@ percentage_cell_data_func (GtkTreeViewColumn *column,
   g_free (str);
 }
 
+static gchar *
+parse_priority_from_nice (gint nice)
+{
+  if (nice < -7)
+    return "Very High";
+  else if (nice < -2)
+    return "High";
+  else if (nice < 3)
+    return "Normal";
+  else if (nice < 7)
+    return "Low";
+  else
+    return "Very Low";
+}
+
+static void
+priority_cell_data_func (GtkTreeViewColumn *column,
+                         GtkCellRenderer   *cell,
+                         GtkTreeModel      *model,
+                         GtkTreeIter       *iter,
+                         gpointer           data)
+{
+  const guint index = GPOINTER_TO_UINT (data);
+
+  GValue value = { 0 };
+
+  gtk_tree_model_get_value (model, iter, index, &value);
+
+  gint priority = g_value_get_int (&value);
+
+  g_value_unset (&value);
+
+  g_object_set (cell, "text", parse_priority_from_nice (priority), NULL);
+}
+
+gint
+priority_cell_sort_func (GtkTreeModel*model,
+                         GtkTreeIter *a,
+                         GtkTreeIter *b,
+                         gpointer     data)
+{
+  const guint index = GPOINTER_TO_UINT (data);
+
+  gint   result;
+  GValue value1 = { 0 };
+  GValue value2 = { 0 };
+  
+  gtk_tree_model_get_value (model, a, index, &value1);
+  gtk_tree_model_get_value (model, b, index, &value2);
+
+  result = g_value_get_int (&value1) - g_value_get_int (&value2);
+
+  g_value_unset (&value1);
+  g_value_unset (&value2);
+
+  return result;
+}
+
 static void
 peek_tree_view_create_columns (GtkTreeView *tree_view)
 {  
+  GtkTreeModel      *model;
   GtkCellRenderer   *renderer;
   GtkTreeViewColumn *column;
+
+  model = gtk_tree_view_get_model (tree_view);
 
   // Process Name
   renderer = gtk_cell_renderer_text_new ();
@@ -129,8 +190,8 @@ peek_tree_view_create_columns (GtkTreeView *tree_view)
                                            size_cell_data_func, 
                                            GUINT_TO_POINTER (COLUMN_MEMORY),
                                            NULL);
-  // right align
-  g_object_set (G_OBJECT (renderer), "xalign", 1.0f, NULL);
+
+  g_object_set (G_OBJECT (renderer), "xalign", 1.0f, NULL); // right alignment
   gtk_tree_view_column_set_sort_column_id (column, COLUMN_MEMORY);
   gtk_tree_view_column_set_reorderable (column, TRUE);
   gtk_tree_view_append_column (tree_view, column);
@@ -146,8 +207,8 @@ peek_tree_view_create_columns (GtkTreeView *tree_view)
                                            percentage_cell_data_func, 
                                            GUINT_TO_POINTER (COLUMN_CPU_P),
                                            NULL);
-  // right align
-  g_object_set (G_OBJECT (renderer), "xalign", 1.0f, NULL);
+
+  g_object_set (G_OBJECT (renderer), "xalign", 1.0f, NULL); // right alignment
   gtk_tree_view_column_set_sort_column_id (column, COLUMN_CPU_P);
   gtk_tree_view_column_set_reorderable (column, TRUE);
   gtk_tree_view_append_column (tree_view, column);
@@ -181,6 +242,26 @@ peek_tree_view_create_columns (GtkTreeView *tree_view)
                                                      NULL);
                                                     
   gtk_tree_view_column_set_sort_column_id (column, COLUMN_NICE);
+  gtk_tree_view_column_set_reorderable (column, TRUE);
+  gtk_tree_view_append_column (tree_view, column);
+
+  // Priority
+  renderer = gtk_cell_renderer_text_new ();
+  column = gtk_tree_view_column_new_with_attributes ("Priority",
+                                                     renderer,
+                                                     "text", COLUMN_PRIORITY,
+                                                     NULL);
+                                                    
+  gtk_tree_view_column_set_cell_data_func (column, renderer,
+                                           priority_cell_data_func, 
+                                           GUINT_TO_POINTER (COLUMN_NICE),
+                                           NULL);
+
+  gtk_tree_sortable_set_sort_func (GTK_TREE_SORTABLE (model), COLUMN_PRIORITY,
+                                   priority_cell_sort_func, GUINT_TO_POINTER (COLUMN_NICE),
+                                   NULL);
+
+  gtk_tree_view_column_set_sort_column_id (column, COLUMN_PRIORITY);
   gtk_tree_view_column_set_reorderable (column, TRUE);
   gtk_tree_view_append_column (tree_view, column);
 }
