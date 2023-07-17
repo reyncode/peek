@@ -97,6 +97,39 @@ parse_priority_from_nice (gint nice)
     return "Very Low";
 }
 
+static inline guint
+divide (guint *q,
+        guint *r,
+        guint  d)
+{
+  *q = *r / d;
+  *r = *r % d;
+  return *q != 0;
+}
+
+static gchar *
+parse_duration_centiseconds (guint centiseconds)
+{
+  guint weeks = 0, days = 0, hours = 0, minutes = 0, seconds = 0;
+
+  (void)(divide (&seconds, &centiseconds, 100)
+      && divide (&minutes, &seconds, 60)
+      && divide (&hours, &minutes, 60)
+      && divide (&days, &hours, 24)
+      && divide (&weeks, &days, 7));
+
+  if (weeks)
+    return g_strdup_printf ("%uw%ud", weeks, days);
+
+  if (days)
+    return g_strdup_printf ("%ud%02uh", days, hours);
+
+  if (hours)
+    return g_strdup_printf ("%uh%02u:%02u", hours, minutes, seconds);
+
+  return g_strdup_printf ("%u:%02u.%02u", minutes, seconds, centiseconds);
+}
+
 static void
 priority_cell_data_func (GtkTreeViewColumn *column,
                          GtkCellRenderer   *cell,
@@ -138,6 +171,50 @@ priority_cell_sort_func (GtkTreeModel*model,
   g_value_unset (&value2);
 
   return result;
+}
+
+static void
+duration_cell_data_func (GtkTreeViewColumn *column,
+                         GtkCellRenderer   *cell,
+                         GtkTreeModel      *model,
+                         GtkTreeIter       *iter,
+                         gpointer           data)
+{
+  const guint index = GPOINTER_TO_UINT (data);
+
+  guint time;
+  GValue value = { 0 };
+
+  gtk_tree_model_get_value (model, iter, index, &value);
+
+  switch (G_VALUE_TYPE (&value))
+  {
+    case G_TYPE_ULONG:
+      time = g_value_get_ulong (&value);
+      break;
+
+    case G_TYPE_UINT64:
+      time = g_value_get_uint64 (&value);
+      break;
+
+    default:
+      g_assert_not_reached ();
+  }
+
+  g_value_unset (&value);
+
+  PeekApplication *app;
+  guint64          frequency;
+
+  app = peek_application_get_instance ();
+  frequency = peek_application_get_cpu_frequency (app);
+
+  time = 100 * time / frequency;
+  char *str = parse_duration_centiseconds (time);
+
+  g_object_set (cell, "text", str, NULL);
+
+  g_free (str);
 }
 
 static void
@@ -210,6 +287,23 @@ peek_tree_view_create_columns (GtkTreeView *tree_view)
 
   g_object_set (G_OBJECT (renderer), "xalign", 1.0f, NULL); // right alignment
   gtk_tree_view_column_set_sort_column_id (column, COLUMN_CPU_P);
+  gtk_tree_view_column_set_reorderable (column, TRUE);
+  gtk_tree_view_append_column (tree_view, column);
+
+  // CPU Time
+  renderer = gtk_cell_renderer_text_new ();
+  column = gtk_tree_view_column_new_with_attributes ("CPU Time",
+                                                     renderer,
+                                                     "text", COLUMN_CPU_TIME,
+                                                     NULL);
+
+  gtk_tree_view_column_set_cell_data_func (column, renderer,
+                                           duration_cell_data_func, 
+                                           GUINT_TO_POINTER (COLUMN_CPU_TIME),
+                                           NULL);
+
+  g_object_set (G_OBJECT (renderer), "xalign", 1.0f, NULL); // right alignment
+  gtk_tree_view_column_set_sort_column_id (column, COLUMN_CPU_TIME);
   gtk_tree_view_column_set_reorderable (column, TRUE);
   gtk_tree_view_append_column (tree_view, column);
 

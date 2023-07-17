@@ -27,6 +27,10 @@ guint64 peek_application_get_cpu_time_total_last (PeekApplication *self);
 
 void peek_application_set_cpu_time_total_last (PeekApplication *self, guint64 value);
 
+guint64 peek_application_get_cpu_frequency (PeekApplication *self);
+
+void peek_application_set_cpu_frequency (PeekApplication *self, guint64 value);
+
 PeekApplication *peek_application_new (void);
 
 G_END_DECLS

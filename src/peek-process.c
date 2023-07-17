@@ -94,7 +94,7 @@ proc_data_new (pid_t pid)
   proc_data->uid = puid.uid;
   proc_data->nice = puid.nice;
 
-  proc_data->cpu_time = ptime.rtime; // set the start time
+  proc_data->cpu_time = ptime.rtime;
   proc_data->cpu_usage = 0;
 
   proc_data->name = g_strdup (pstate.cmd);
@@ -123,6 +123,7 @@ update_cpu_timing_values (PeekApplication *app)
 
   peek_application_set_cpu_time_total (app, cpu_time_total);
   peek_application_set_cpu_time_total_last (app, cpu_time_total_last);
+  peek_application_set_cpu_frequency (app, cpu.frequency);
 }
 
 static pid_t *
@@ -236,14 +237,15 @@ update_proc_list (PeekApplication *app,
       // tree insertion
       gtk_list_store_append (GTK_LIST_STORE (child), &proc_data->iter);
       gtk_list_store_set (GTK_LIST_STORE (child), &proc_data->iter,
-                          COLUMN_NAME,   proc_data->name,
-                          COLUMN_ID,     proc_data->pid,
-                          COLUMN_USER,   parse_user_from_uid (proc_data->uid),
-                          COLUMN_MEMORY, proc_data->memory,
-                          COLUMN_CPU_P,  proc_data->cpu_usage,
-                          COLUMN_PPID,   proc_data->ppid,
-                          COLUMN_STATE,  parse_proc_state (proc_data->state),
-                          COLUMN_NICE,   proc_data->nice,
+                          COLUMN_NAME,     proc_data->name,
+                          COLUMN_ID,       proc_data->pid,
+                          COLUMN_USER,     parse_user_from_uid (proc_data->uid),
+                          COLUMN_MEMORY,   proc_data->memory,
+                          COLUMN_CPU_P,    proc_data->cpu_usage,
+                          COLUMN_CPU_TIME, proc_data->cpu_time,
+                          COLUMN_PPID,     proc_data->ppid,
+                          COLUMN_STATE,    parse_proc_state (proc_data->state),
+                          COLUMN_NICE,     proc_data->nice,
                           -1);
     }
     else // UPDATE
@@ -251,11 +253,12 @@ update_proc_list (PeekApplication *app,
       proc_data_update (proc_data, app);
 
       gtk_list_store_set (GTK_LIST_STORE (child), &proc_data->iter,
-                          COLUMN_USER,   parse_user_from_uid (proc_data->uid),
-                          COLUMN_MEMORY, proc_data->memory,
-                          COLUMN_CPU_P,  proc_data->cpu_usage,
-                          COLUMN_STATE,  parse_proc_state (proc_data->state),
-                          COLUMN_NICE,   proc_data->nice,
+                          COLUMN_USER,     parse_user_from_uid (proc_data->uid),
+                          COLUMN_MEMORY,   proc_data->memory,
+                          COLUMN_CPU_P,    proc_data->cpu_usage,
+                          COLUMN_CPU_TIME, proc_data->cpu_time,
+                          COLUMN_STATE,    parse_proc_state (proc_data->state),
+                          COLUMN_NICE,     proc_data->nice,
                           -1);
     }
   }

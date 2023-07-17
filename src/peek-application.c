@@ -19,6 +19,7 @@ struct _PeekApplication {
   guint         cores;
   guint64       cpu_time_total;
   guint64       cpu_time_total_last;
+  guint64       cpu_frequency;
 
   guint timeout;
 };
@@ -108,6 +109,7 @@ peek_application_init (PeekApplication *self)
 
   self->cpu_time_total = 0;
   self->cpu_time_total_last = 0;
+  self->cpu_frequency = 0;
 }
 
 static void
@@ -177,6 +179,22 @@ peek_application_set_cpu_time_total_last (PeekApplication *self,
   self->cpu_time_total_last = value;
 }
 
+guint64
+peek_application_get_cpu_frequency (PeekApplication *self)
+{
+  g_return_val_if_fail (PEEK_IS_APPLICATION (self), 0);
+
+  return self->cpu_frequency;
+}
+
+void
+peek_application_set_cpu_frequency (PeekApplication *self,
+                                    guint64          value)
+{
+  g_return_if_fail (PEEK_IS_APPLICATION (self));
+
+  self->cpu_frequency = value;
+}
 
 GtkWidget *
 peek_application_get_search_entry (PeekApplication *self)
