@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="PeekPreferences" parent="GtkDialog">
+    <property name="title" translatable="yes">Preferences</property>
+    <property name="resizable">True</property>
+    <property name="modal">True</property>
+    <property name="default-width">450</property>
+    <property name="default-height">400</property>
+
+    <!-- <child internal-child="content_area">
+    </child> -->
+
+  </template>
+</interface>

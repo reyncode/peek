@@ -1,23 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
-
-  <!-- 
-    layout option 1:
-    
-      Header: kill button, search entry, menu button, min/max/close
-
-      Main: stack pages, list store
-
-      Footer: stack switcher
-
-    layout option 2:
-
-      Header: kill button, search entry, menu button, min/max/close
-
-      Main: stack sidebar (icons), stack pages, list store
-
-  -->
-
   <template class="PeekWindow" parent="GtkApplicationWindow">
     <property name="title" translatable="yes">Peek</property>
     <property name="default-width">750</property>

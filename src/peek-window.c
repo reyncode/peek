@@ -1,6 +1,10 @@
 #include "peek-window.h"
+#include "peek-preferences.h"
 #include "peek-application.h"
 #include "peek-tree-view.h"
+
+#define WINDOW_RESOURCE_PATH "/com/github/reyncode/peek/ui/window.ui"
+#define HEADER_MENU_RESOURCE_PATH "/com/github/reyncode/peek/ui/header-menu.ui"
 
 struct _PeekWindow {
   GtkApplicationWindow parent;
@@ -14,6 +18,16 @@ struct _PeekWindow {
 };
 
 G_DEFINE_TYPE (PeekWindow, peek_window, GTK_TYPE_APPLICATION_WINDOW)
+
+static void preferences_activated (GSimpleAction *action,
+                                   GVariant      *parameter,
+                                   gpointer       data);
+
+static GActionEntry win_entries [] = 
+{
+  { "preferences", preferences_activated, NULL, NULL, NULL },
+};
+
 
 GtkWidget *
 peek_window_get_search_entry (PeekWindow *window)
@@ -53,6 +67,19 @@ search_entry_changed (GtkEditable *self,
 }
 
 static void
+preferences_activated (GSimpleAction *action,
+                       GVariant      *parameter,
+                       gpointer       data)
+{
+  PeekWindow *window = PEEK_WINDOW (data);
+  PeekPreferences *preferences;
+
+  preferences = peek_preferences_new (window);
+
+  gtk_window_present (GTK_WINDOW (preferences));
+}
+
+static void
 peek_window_finalize (GObject *object)
 {
   G_OBJECT_CLASS (peek_window_parent_class)->finalize (object);
@@ -65,11 +92,32 @@ peek_window_dispose (GObject *object)
 }
 
 static void
+init_header_menu_button (PeekWindow *self)
+{
+	GtkBuilder *ui_builder;
+	GMenuModel *header_menu;
+
+	ui_builder = gtk_builder_new_from_resource (HEADER_MENU_RESOURCE_PATH);
+	header_menu = G_MENU_MODEL (gtk_builder_get_object (ui_builder, "header-menu"));
+
+	gtk_menu_button_set_menu_model (GTK_MENU_BUTTON (self->header_menu_button),
+                                  header_menu);
+
+  g_action_map_add_action_entries (G_ACTION_MAP (self),
+                                   win_entries, G_N_ELEMENTS (win_entries),
+                                   self);
+
+  g_object_unref (ui_builder);
+}
+
+static void
 peek_window_init (PeekWindow *self)
 {
   g_type_ensure (PEEK_TYPE_TREE_VIEW);
 
   gtk_widget_init_template (GTK_WIDGET (self));
+
+  init_header_menu_button (self);
 
   peek_tree_view_set_search_entry (PEEK_TREE_VIEW (self->peek_tree_view),
                                    GTK_ENTRY (self->search_entry));
@@ -82,7 +130,7 @@ peek_window_class_init (PeekWindowClass *klass)
   G_OBJECT_CLASS (klass)->dispose = peek_window_dispose;
 
   gtk_widget_class_set_template_from_resource (GTK_WIDGET_CLASS (klass),
-                                               "/com/github/reyncode/peek/ui/window.ui");
+                                               WINDOW_RESOURCE_PATH);
 
   // header bar
   gtk_widget_class_bind_template_child (GTK_WIDGET_CLASS (klass),

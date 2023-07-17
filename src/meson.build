@@ -2,6 +2,7 @@ sources = [
   'main.c',
   'peek-application.c', 'peek-application.h',
   'peek-window.c', 'peek-window.h',
+  'peek-preferences.c', 'peek-preferences.h',
   'peek-tree-view.c', 'peek-tree-view.h',
   'peek-tree-model.c', 'peek-tree-model.h',
   'peek-process.c', 'peek-process.h',
