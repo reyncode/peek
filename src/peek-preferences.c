@@ -30,8 +30,9 @@ peek_preferences_class_init (PeekPreferencesClass *klass)
 }
 
 PeekPreferences *
-peek_preferences_new ()
+peek_preferences_new (PeekWindow *window)
 {
   return g_object_new (PEEK_TYPE_PREFERENCES,
+                       "transient-for", window,
                        NULL);
 }

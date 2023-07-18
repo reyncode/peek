@@ -52,15 +52,15 @@ search_child_is_visible (GtkTreeModel *model,
                          gpointer      data)
 {
   PeekApplication *app = PEEK_APPLICATION (data);
-  GtkEntry        *entry;
+  GtkEditable     *editable;
   const gchar     *query;
   gboolean         found = FALSE;
 
-  entry = GTK_ENTRY (peek_application_get_search_entry (app));
-  if (!entry)
+  editable = GTK_EDITABLE (peek_application_get_search_entry (app));
+  if (!editable)
     return TRUE;
 
-  query = gtk_entry_get_text (entry);
+  query = gtk_editable_get_text (editable);
 
   if (g_strcmp0 (query, "") == 0)
     return TRUE;

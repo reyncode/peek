@@ -1,30 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
 
-  <template class="PeekTreeView" parent="GtkBin">
+  <template class="PeekTreeView" parent="GtkBox">
+    <property name="vexpand">True</property> 
     <child>
       <object class="GtkScrolledWindow">
-        <property name="visible">True</property> 
-        <property name="shadow-type">GTK_SHADOW_ETCHED_IN</property> 
+        <property name="propagate-natural-width">True</property> 
         <property name="vscrollbar-policy">GTK_POLICY_AUTOMATIC</property> 
-        <property name="expand">True</property> 
+        <property name="child">
 
-        <child>
           <object class="GtkTreeView" id="tree_view">
             <property name="visible">True</property> 
-
             <child internal-child="selection">
               <object class="GtkTreeSelection">
                 <signal handler="peek_tree_view_selection_changed" name="changed" object="PeekTreeView" swapped="no"/>
               </object>
             </child>
-
           </object>
-        </child>
-
+        
+        </property> 
       </object>
-    </child>
-
+    </child> 
   </template>
-
 </interface>

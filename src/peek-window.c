@@ -37,21 +37,21 @@ peek_window_get_search_entry (PeekWindow *window)
   return window->search_entry;
 }
 
-static gboolean
-on_key_press_event (GtkWidget *widget,
-                    GdkEvent  *event,
-                    gpointer   data)
-{
-  PeekWindow *window = PEEK_WINDOW (data);
+// static gboolean
+// on_key_press_event (GtkWidget *widget,
+//                     GdkEvent  *event,
+//                     gpointer   data)
+// {
+//   PeekWindow *window = PEEK_WINDOW (data);
 
-  // do something with the key
-  // if (event->key.keyval == GDK_KEY_Escape)
+//   // do something with the key
+//   // if (event->key.keyval == GDK_KEY_Escape)
 
-  if (!gtk_widget_is_focus (window->search_entry))
-    gtk_entry_grab_focus_without_selecting (GTK_ENTRY (window->search_entry));
+//   if (!gtk_widget_is_focus (window->search_entry))
+//     gtk_entry_grab_focus_without_selecting (GTK_ENTRY (window->search_entry));
 
-  return gtk_search_entry_handle_event (GTK_SEARCH_ENTRY (window->search_entry), event);
-}
+//   return gtk_search_entry_handle_event (GTK_SEARCH_ENTRY (window->search_entry), event);
+// }
 
 static void
 search_entry_changed (GtkEditable *self,
@@ -120,7 +120,10 @@ peek_window_init (PeekWindow *self)
   init_header_menu_button (self);
 
   peek_tree_view_set_search_entry (PEEK_TREE_VIEW (self->peek_tree_view),
-                                   GTK_ENTRY (self->search_entry));
+                                   GTK_EDITABLE (self->search_entry));
+
+  gtk_search_entry_set_key_capture_widget (GTK_SEARCH_ENTRY (self->search_entry),
+                                           GTK_WIDGET (self));
 }
 
 static void
@@ -147,8 +150,8 @@ peek_window_class_init (PeekWindowClass *klass)
                                         peek_tree_view);
 
   // callbacks
-  gtk_widget_class_bind_template_callback (GTK_WIDGET_CLASS (klass),
-                                           on_key_press_event);
+  // gtk_widget_class_bind_template_callback (GTK_WIDGET_CLASS (klass),
+  //                                          on_key_press_event);
 
   gtk_widget_class_bind_template_callback (GTK_WIDGET_CLASS (klass),
                                            search_entry_changed);
