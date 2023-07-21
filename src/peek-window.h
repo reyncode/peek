@@ -7,7 +7,7 @@
 G_BEGIN_DECLS
 
 #define PEEK_TYPE_WINDOW (peek_window_get_type ())
-G_DECLARE_FINAL_TYPE (PeekWindow, peek_window, PEEK, WINDOW, GtkApplicationWindow)
+G_DECLARE_FINAL_TYPE (PeekWindow, peek_window, PEEK, WINDOW, AdwApplicationWindow)
 
 PeekWindow *peek_window_new (PeekApplication *app);
 

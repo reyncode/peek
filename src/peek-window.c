@@ -1,3 +1,5 @@
+#include <adwaita.h>
+
 #include "peek-window.h"
 #include "peek-preferences.h"
 #include "peek-application.h"
@@ -7,7 +9,7 @@
 #define HEADER_MENU_RESOURCE_PATH "/com/github/reyncode/peek/ui/header-menu.ui"
 
 struct _PeekWindow {
-  GtkApplicationWindow parent;
+  AdwApplicationWindow parent;
 
   // header bar
   GtkWidget *search_entry;
@@ -17,7 +19,7 @@ struct _PeekWindow {
   GtkWidget *peek_tree_view;
 };
 
-G_DEFINE_TYPE (PeekWindow, peek_window, GTK_TYPE_APPLICATION_WINDOW)
+G_DEFINE_TYPE (PeekWindow, peek_window, ADW_TYPE_APPLICATION_WINDOW)
 
 static void preferences_activated (GSimpleAction *action,
                                    GVariant      *parameter,
@@ -161,6 +163,6 @@ PeekWindow *
 peek_window_new (PeekApplication *app)
 {
   return g_object_new (PEEK_TYPE_WINDOW,
-                         "application", app,
-                         NULL);
+                       "application", app,
+                        NULL);
 }

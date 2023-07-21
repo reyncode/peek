@@ -1,4 +1,4 @@
-#include <gtk/gtk.h>
+#include <adwaita.h>
 
 #include "peek-application.h"
 

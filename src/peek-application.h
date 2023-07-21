@@ -1,13 +1,11 @@
 #pragma once
 
-#include "gtk/gtk.h"
+#include <adwaita.h>
 
 G_BEGIN_DECLS
 
-// public facing members
-
 #define PEEK_TYPE_APPLICATION (peek_application_get_type ())
-G_DECLARE_FINAL_TYPE (PeekApplication, peek_application, PEEK, APPLICATION, GtkApplication)
+G_DECLARE_FINAL_TYPE (PeekApplication, peek_application, PEEK, APPLICATION, AdwApplication)
 
 PeekApplication *peek_application_get_instance (void);
 

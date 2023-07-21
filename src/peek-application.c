@@ -1,3 +1,5 @@
+#include <adwaita.h>
+
 #include "peek-application.h"
 #include "peek-window.h"
 #include "peek-process.h"
@@ -10,7 +12,7 @@
 #define REFRESH_INTERVAL 2
 
 struct _PeekApplication {
-  GtkApplication parent;
+  AdwApplication parent;
 
   GtkTreeModel *model;
   GHashTable   *proc_table;
@@ -26,7 +28,7 @@ struct _PeekApplication {
 
 // consider making private and public members
 
-G_DEFINE_TYPE (PeekApplication, peek_application, GTK_TYPE_APPLICATION)
+G_DEFINE_TYPE (PeekApplication, peek_application, ADW_TYPE_APPLICATION)
 
 static void
 proc_table_value_destroy (gpointer data)

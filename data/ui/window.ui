@@ -1,47 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
-  <template class="PeekWindow" parent="GtkApplicationWindow">
+  <template class="PeekWindow" parent="AdwApplicationWindow">
     <property name="title" translatable="yes">Peek</property>
     <property name="default-width">750</property>
     <property name="default-height">500</property>
 
-    <child type="titlebar">
-      <object class="GtkHeaderBar">
-        <property name="decoration-layout">icon:minimize,maximize,close</property>
+    <property name="content">
+      <object class="GtkBox">
+      <property name="orientation">vertical</property>
 
-        <child type="title">
-          <object class="GtkSearchEntry" id="search_entry">
-            <property name="placeholder-text">Search by name, PID, or user</property>
-            <property name="width-request">250</property>
-            <signal name="changed" handler="search_entry_changed"/>
-          </object>
-        </child>
+        <child>
+          <object class="AdwHeaderBar">
+            <property name="decoration-layout">icon:minimize,maximize,close</property>
 
-        <child type="end">
-          <object class="GtkMenuButton" id="header_menu_button">
-            <child>
-              <object class="GtkImage">
-                <property name="can_focus">False</property>
+            <child type="title">
+              <object class="GtkSearchEntry" id="search_entry">
+                <property name="placeholder-text">Search by name, PID, or user</property>
+                <property name="width-request">250</property>
+                <signal name="changed" handler="search_entry_changed"/>
+              </object>
+            </child>
+
+            <child type="end">
+              <object class="GtkMenuButton" id="header_menu_button">
                 <property name="icon_name">open-menu-symbolic</property>
               </object>
             </child>
+
+          </object>
+        </child>
+
+        <child>
+          <object class="GtkBox">
+            <property name="orientation">vertical</property> 
+
+            <child>
+              <object class="PeekTreeView" id="peek_tree_view"/>
+            </child>
+
           </object>
         </child>
 
       </object>
-    </child>
-
-    <child>
-      <object class="GtkBox">
-        <property name="orientation">vertical</property> 
-
-        <child>
-          <object class="PeekTreeView" id="peek_tree_view"/>
-        </child>
-
-      </object>
-    </child>
-
+    </property>
   </template>
 
 </interface>
