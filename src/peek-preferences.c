@@ -3,10 +3,10 @@
 #define RESOURCE_PATH "/com/github/reyncode/peek/ui/preferences.ui"
 
 struct _PeekPreferences {
-  GtkDialog parent;
+  AdwPreferencesWindow parent;
 };
 
-G_DEFINE_TYPE (PeekPreferences, peek_preferences, GTK_TYPE_DIALOG)
+G_DEFINE_TYPE (PeekPreferences, peek_preferences, ADW_TYPE_PREFERENCES_WINDOW)
 
 static void
 peek_preferences_finalize (GObject *object)
