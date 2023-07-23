@@ -396,13 +396,30 @@ process_inspector (GtkTreeView       *self,
     app = peek_application_get_instance ();
     window = gtk_application_get_active_window (GTK_APPLICATION (app));
 
-    view = peek_process_view_new (PEEK_WINDOW (window));
+    gchar *title;
+    gchar *name;
+    pid_t  pid;
+
+    gtk_tree_model_get (model, &iter,
+                        COLUMN_NAME, &name,
+                        COLUMN_ID, &pid,
+                        -1);
+
+    title = g_strdup_printf ("%s (%d)", name, pid);
+
+    view = peek_process_view_new (PEEK_WINDOW (window), title);
+
+    /*
+      i want it to update at the same time as the tree view is upated
+
+      create a signal to tell the window to get new info
+    */
 
     gtk_window_present (GTK_WINDOW (view));
+
+    g_clear_pointer (&title, g_free);
+    g_clear_pointer (&name, g_free);
   }
-
-  // gtk_tree_model_get (model, &iter, COLUMN_NAME, &name, -1);
-
 }
 
 static void

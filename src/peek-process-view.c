@@ -18,6 +18,8 @@ static void
 peek_process_view_init (PeekProcessView *self)
 {
   gtk_widget_init_template (GTK_WIDGET (self));
+
+  // catch a signal for updating processes
 }
 
 static void
@@ -30,9 +32,11 @@ peek_process_view_class_init (PeekProcessViewClass *klass)
 }
 
 PeekProcessView *
-peek_process_view_new (PeekWindow *window)
+peek_process_view_new (PeekWindow *window,
+                       const gchar *title)
 {
   return g_object_new (PEEK_TYPE_PROCESS_VIEW,
                        "transient-for", window,
+                       "title", title,
                        NULL);
 }
