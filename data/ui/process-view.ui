@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="PeekProcessView" parent="AdwPreferencesWindow">
+    <property name="title" translatable="yes">Process</property>
+    <child>
+      <object class="AdwPreferencesPage">
+
+      </object>
+    </child>
+  </template>
+</interface>

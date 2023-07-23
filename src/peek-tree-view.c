@@ -2,6 +2,7 @@
 #include "peek-application.h"
 #include "peek-tree-model.h"
 #include "peek-process.h"
+#include "peek-process-view.h"
 
 #define TREE_VIEW_RESOURCE_PATH "/com/github/reyncode/peek/ui/tree-view.ui"
 
@@ -378,6 +379,33 @@ peek_tree_view_selection_changed (GtkTreeSelection *selection,
 }
 
 static void
+process_inspector (GtkTreeView       *self,
+                   GtkTreePath       *path,
+                   GtkTreeViewColumn *column,
+                   gpointer           data)
+{
+  GtkTreeModel *model = GTK_TREE_MODEL (data);
+  GtkTreeIter   iter;
+
+  if (gtk_tree_model_get_iter (model, &iter, path))
+  {
+    PeekApplication *app;
+    GtkWindow       *window;
+    PeekProcessView *view;
+
+    app = peek_application_get_instance ();
+    window = gtk_application_get_active_window (GTK_APPLICATION (app));
+
+    view = peek_process_view_new (PEEK_WINDOW (window));
+
+    gtk_window_present (GTK_WINDOW (view));
+  }
+
+  // gtk_tree_model_get (model, &iter, COLUMN_NAME, &name, -1);
+
+}
+
+static void
 peek_tree_view_finalize (GObject *object)
 {
   G_OBJECT_CLASS (peek_tree_view_parent_class)->finalize (object);
@@ -386,6 +414,8 @@ peek_tree_view_finalize (GObject *object)
 static void
 peek_tree_view_init (PeekTreeView *self)
 {
+  g_type_ensure (PEEK_TYPE_PROCESS_VIEW);
+
   gtk_widget_init_template (GTK_WIDGET (self));
 
   PeekApplication *application;
@@ -397,6 +427,11 @@ peek_tree_view_init (PeekTreeView *self)
   gtk_tree_view_set_model (GTK_TREE_VIEW (self->tree_view), model);
 
   peek_tree_view_create_columns (GTK_TREE_VIEW (self->tree_view));
+
+  g_signal_connect (GTK_TREE_VIEW (self->tree_view),
+                    "row-activated",
+                    G_CALLBACK (process_inspector),
+                    model);
 }
 
 static void

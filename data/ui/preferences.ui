@@ -40,8 +40,9 @@
                 <object class="AdwActionRow">
                   <property name="title" translatable="yes">Process Name</property>
                     <child>
-                      <object class="GtkCheckButton">
+                      <object class="GtkCheckButton" id="name_check_button">
                         <property name="valign">center</property>
+                        <!-- <property name="active" bind-source="show_banner_switch" bind-property="active" bind-flags="sync-create|bidirectional" /> -->
                       </object>
                     </child>
                 </object>

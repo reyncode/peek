@@ -2,6 +2,7 @@
 <gresources>
   <gresource prefix="/com/github/reyncode/peek">
     <file preprocess="xml-stripblanks">ui/tree-view.ui</file>
+    <file preprocess="xml-stripblanks">ui/process-view.ui</file>
     <file preprocess="xml-stripblanks">ui/window.ui</file>
     <file preprocess="xml-stripblanks">ui/preferences.ui</file>
     <file preprocess="xml-stripblanks">ui/header-menu.ui</file>
