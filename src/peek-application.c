@@ -11,6 +11,8 @@
 #define APPLICATION_ID "com.github.reyncode.peek"
 #define REFRESH_INTERVAL 2
 
+static guint proc_update_signal;
+
 struct _PeekApplication {
   AdwApplication parent;
 
@@ -117,6 +119,17 @@ peek_application_init (PeekApplication *self)
 static void
 peek_application_class_init (PeekApplicationClass *klass)
 {
+  proc_update_signal = g_signal_new ("proc-update",
+                                     G_TYPE_FROM_CLASS (klass),
+                                     G_SIGNAL_RUN_LAST | G_SIGNAL_NO_RECURSE | G_SIGNAL_NO_HOOKS,
+                                     0,
+                                     NULL,
+                                     NULL,
+                                     NULL,
+                                     G_TYPE_NONE,
+                                     0);
+
+
   G_OBJECT_CLASS (klass)->finalize = peek_application_finalize;
 
   G_APPLICATION_CLASS (klass)->startup = peek_application_startup;

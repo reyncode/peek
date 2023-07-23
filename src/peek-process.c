@@ -308,5 +308,7 @@ peek_process_updater (gpointer data)
 
   update_proc_list (app, pids, proclist.number);
 
+  g_signal_emit_by_name (app, "proc-update");
+
   return G_SOURCE_CONTINUE;
 }
