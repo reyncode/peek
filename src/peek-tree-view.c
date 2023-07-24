@@ -409,11 +409,7 @@ process_inspector (GtkTreeView       *self,
 
     view = peek_process_view_new (PEEK_WINDOW (window), title);
 
-    /*
-      i want it to update at the same time as the tree view is upated
-
-      create a signal to tell the window to get new info
-    */
+    peek_process_view_set_pid (view, pid);
 
     gtk_window_present (GTK_WINDOW (view));
 

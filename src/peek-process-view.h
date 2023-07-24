@@ -12,4 +12,7 @@ G_DECLARE_FINAL_TYPE (PeekProcessView, peek_process_view, PEEK, PROCESS_VIEW, Ad
 PeekProcessView *peek_process_view_new (PeekWindow *window,
                                         const gchar *title);
 
+void peek_process_view_set_pid (PeekProcessView *view, 
+                                const pid_t      pid);
+
 G_END_DECLS
