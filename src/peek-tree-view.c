@@ -389,32 +389,16 @@ process_inspector (GtkTreeView       *self,
 
   if (gtk_tree_model_get_iter (model, &iter, path))
   {
-    PeekApplication *app;
-    GtkWindow       *window;
     PeekProcessView *view;
-
-    app = peek_application_get_instance ();
-    window = gtk_application_get_active_window (GTK_APPLICATION (app));
-
-    gchar *title;
-    gchar *name;
-    pid_t  pid;
+    pid_t pid;
 
     gtk_tree_model_get (model, &iter,
-                        COLUMN_NAME, &name,
                         COLUMN_ID, &pid,
                         -1);
 
-    title = g_strdup_printf ("%s (%d)", name, pid);
-
-    view = peek_process_view_new (PEEK_WINDOW (window), title);
-
-    peek_process_view_set_pid (view, pid);
+    view = peek_process_view_new (pid);
 
     gtk_window_present (GTK_WINDOW (view));
-
-    g_clear_pointer (&title, g_free);
-    g_clear_pointer (&name, g_free);
   }
 }
 

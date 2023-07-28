@@ -15,7 +15,7 @@
               <property name="title" translatable="yes">Name</property>
 
                 <child>
-                  <object class="GtkLabel">
+                  <object class="GtkLabel" id="name_label">
                     <property name="label"></property>
                     <property name="valign">center</property>
                   </object>
@@ -29,7 +29,7 @@
               <property name="title" translatable="yes">PID</property>
 
                 <child>
-                  <object class="GtkLabel">
+                  <object class="GtkLabel" id="pid_label">
                     <property name="label"></property>
                     <property name="valign">center</property>
                   </object>
@@ -43,7 +43,7 @@
               <property name="title" translatable="yes">User</property>
 
                 <child>
-                  <object class="GtkLabel">
+                  <object class="GtkLabel" id="user_label">
                     <property name="label"></property>
                     <property name="valign">center</property>
                   </object>

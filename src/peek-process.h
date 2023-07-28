@@ -27,3 +27,5 @@ typedef struct ProcData {
 } ProcData;
 
 gboolean peek_process_updater (gpointer data);
+
+const gchar *parse_user_from_uid (guint32 uid);

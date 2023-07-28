@@ -18,7 +18,7 @@
 
 #include <pwd.h>
 
-static const gchar *parse_user_from_uid (guint32 uid);
+const gchar *parse_user_from_uid (guint32 uid);
 static const gchar *parse_proc_state (guint state);
 
 /* read from /proc/[pid] for process information */
@@ -165,7 +165,7 @@ parse_proc_state (guint state)
   return status;
 }
 
-static const gchar *
+const gchar *
 parse_user_from_uid (guint32 uid)
 {
   const gchar *user;
