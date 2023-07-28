@@ -20,6 +20,7 @@ struct _PeekProcessView {
   GtkWidget *name_label;
   GtkWidget *pid_label;
   GtkWidget *user_label;
+  GtkWidget *status_label;
   GtkWidget *memory_label;
   GtkWidget *cpu_usage_label;
 };
@@ -30,7 +31,6 @@ static void
 proc_update_cb (PeekApplication *app,
                 gpointer         data)
 {
-
   PeekProcessView *view = PEEK_PROCESS_VIEW (data);
   GHashTable *table;
   ProcData *proc;
@@ -38,15 +38,26 @@ proc_update_cb (PeekApplication *app,
   table = peek_application_get_proc_table (app);
   proc = g_hash_table_lookup (table, &view->pid);
 
-  /*
-    currently segfaulting
-    handle edge case where a valid proc is removed
-  */
+  if (!proc)
+  {
+    gchar *title;
+    title = g_strdup_printf ("Dead - %s", gtk_window_get_title (GTK_WINDOW (view)));
+    gtk_window_set_title (GTK_WINDOW (view), title);
+
+    gtk_label_set_label (GTK_LABEL (view->status_label), "Dead");
+
+    g_signal_handlers_disconnect_by_func (app,
+                                          proc_update_cb,
+                                          view);
+
+    return;
+  }
   
   gchar *memory_formatted = g_format_size (proc->memory);
   gchar *cpu_usage_formatted = g_strdup_printf ("%.2f", proc->cpu_usage);
 
   gtk_label_set_label (GTK_LABEL (view->user_label), parse_user_from_uid (proc->uid));
+  gtk_label_set_label (GTK_LABEL (view->status_label), parse_proc_state (proc->state));
   gtk_label_set_label (GTK_LABEL (view->memory_label), memory_formatted);
   gtk_label_set_label (GTK_LABEL (view->cpu_usage_label), cpu_usage_formatted);
 
@@ -127,6 +138,7 @@ peek_process_view_constructed (GObject *object)
   gtk_label_set_label (GTK_LABEL (self->name_label), proc->name);
   gtk_label_set_label (GTK_LABEL (self->pid_label), pid_label);
   gtk_label_set_label (GTK_LABEL (self->user_label), parse_user_from_uid (proc->uid));
+  gtk_label_set_label (GTK_LABEL (self->status_label), parse_proc_state (proc->state));
   gtk_label_set_label (GTK_LABEL (self->memory_label), memory_formatted);
   gtk_label_set_label (GTK_LABEL (self->cpu_usage_label), cpu_usage_formatted);
 
@@ -167,6 +179,10 @@ peek_process_view_class_init (PeekProcessViewClass *klass)
   gtk_widget_class_bind_template_child (GTK_WIDGET_CLASS (klass),
                                         PeekProcessView,
                                         user_label);
+
+  gtk_widget_class_bind_template_child (GTK_WIDGET_CLASS (klass),
+                                        PeekProcessView,
+                                        status_label);
 
   gtk_widget_class_bind_template_child (GTK_WIDGET_CLASS (klass),
                                         PeekProcessView,

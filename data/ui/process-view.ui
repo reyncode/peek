@@ -54,6 +54,20 @@
 
           <child>
             <object class="AdwActionRow">
+              <property name="title" translatable="yes">Status</property>
+
+                <child>
+                  <object class="GtkLabel" id="status_label">
+                    <property name="label"></property>
+                    <property name="valign">center</property>
+                  </object>
+                </child>
+
+            </object>
+          </child>
+
+          <child>
+            <object class="AdwActionRow">
               <property name="title" translatable="yes">Memory</property>
 
                 <child>
