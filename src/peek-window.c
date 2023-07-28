@@ -4,6 +4,7 @@
 #include "peek-preferences.h"
 #include "peek-application.h"
 #include "peek-tree-view.h"
+#include "peek-tree-model.h"
 
 #define WINDOW_RESOURCE_PATH "/com/github/reyncode/peek/ui/window.ui"
 #define HEADER_MENU_RESOURCE_PATH "/com/github/reyncode/peek/ui/header-menu.ui"
@@ -80,8 +81,12 @@ preferences_activated (GSimpleAction *action,
 {
   PeekWindow *window = PEEK_WINDOW (data);
   PeekPreferences *preferences;
+  GtkWidget *tree_view;
 
-  preferences = peek_preferences_new (window);
+  tree_view = peek_tree_view_get_tree_view (PEEK_TREE_VIEW (window->peek_tree_view));
+
+  preferences = peek_preferences_new (window,
+                                      tree_view);
 
   gtk_window_present (GTK_WINDOW (preferences));
 }

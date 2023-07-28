@@ -14,6 +14,14 @@ struct _PeekTreeView {
 
 G_DEFINE_TYPE (PeekTreeView, peek_tree_view, GTK_TYPE_BOX)
 
+GtkWidget *
+peek_tree_view_get_tree_view (PeekTreeView *peek_tree_view)
+{
+  g_return_val_if_fail (PEEK_IS_TREE_VIEW (peek_tree_view), NULL);
+
+  return peek_tree_view->tree_view;
+}
+
 static void
 size_cell_data_func (GtkTreeViewColumn *column,
                      GtkCellRenderer   *cell,
@@ -220,7 +228,7 @@ duration_cell_data_func (GtkTreeViewColumn *column,
   g_free (str);
 }
 
-static void
+static void // return array of GtkWidget *
 peek_tree_view_create_columns (GtkTreeView *tree_view)
 {  
   GtkTreeModel      *model;
@@ -371,6 +379,7 @@ peek_tree_view_set_search_entry (PeekTreeView *peek_tree_view,
                                   editable);
 }
 
+// marked for removal
 static void
 peek_tree_view_selection_changed (GtkTreeSelection *selection,
                                   gpointer          data)

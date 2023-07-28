@@ -28,8 +28,6 @@ struct _PeekApplication {
   guint timeout;
 };
 
-// consider making private and public members
-
 G_DEFINE_TYPE (PeekApplication, peek_application, ADW_TYPE_APPLICATION)
 
 static void

@@ -12,4 +12,6 @@ PeekTreeView *peek_tree_view_new (void);
 void peek_tree_view_set_search_entry (PeekTreeView *peek_tree_view,
                                       GtkEditable  *editable);
 
+GtkWidget *peek_tree_view_get_tree_view (PeekTreeView *peek_tree_view);
+
 G_END_DECLS
