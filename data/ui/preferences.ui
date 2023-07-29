@@ -4,152 +4,160 @@
     <child>
       <object class="AdwPreferencesPage">
 
-      <child>
-        <object class="AdwPreferencesGroup">
-          <property name="title" translatable="yes">Application</property>
-          <property name="description" translatable="yes">Make changes to the way the data is displayed</property>
+        <child>
+          <object class="AdwPreferencesGroup">
+            <property name="title" translatable="yes">Updates</property>
+            <property name="description" translatable="yes">Control the rate at which the tables are refreshed</property>
 
-          <child>
-            <object class="AdwActionRow">
-              <property name="title" translatable="yes">Refresh Rate</property>
+            <child>
+              <object class="AdwActionRow">
+                <property name="title" translatable="yes">Refresh Rate</property>
 
-              <child>
-                <object class="GtkSpinButton">
-                  <property name="valign">center</property>
-                  <property name="numeric">True</property>
-                  <property name="adjustment">
-                    <object class="GtkAdjustment">
-                      <property name="lower">1</property>
-                      <property name="upper">10</property>
-                      <property name="value">2</property>
-                      <property name="page-increment">2</property>
-                      <property name="step-increment">1</property>
-                    </object>
-                  </property>
-                </object>
-              </child>
-
-            </object>
-          </child>
-
-          <child>
-            <object class="AdwExpanderRow" id="expander_row">
-              <property name="title" translatable="yes">Visible Columns</property>
-
-              <child>
-                <object class="AdwActionRow">
-                  <property name="title" translatable="yes">Process Name</property>
-                    <child>
-                      <object class="GtkCheckButton" id="name_check_button">
-                        <property name="valign">center</property>
-                        <property name="active">True</property>
+                <child>
+                  <object class="GtkSpinButton">
+                    <property name="valign">center</property>
+                    <property name="numeric">True</property>
+                    <property name="adjustment">
+                      <object class="GtkAdjustment">
+                        <property name="lower">1</property>
+                        <property name="upper">10</property>
+                        <property name="value">2</property>
+                        <property name="page-increment">2</property>
+                        <property name="step-increment">1</property>
                       </object>
-                    </child>
-                </object>
-              </child>
+                    </property>
+                    <signal name="value-changed" handler="refresh_rate_value_changed"/>
+                  </object>
+                </child>
 
-              <child>
-                <object class="AdwActionRow">
-                  <property name="title" translatable="yes">User</property>
-                    <child>
-                      <object class="GtkCheckButton" id="user_check_button">
-                        <property name="valign">center</property>
-                        <property name="active">True</property>
-                      </object>
-                    </child>
-                </object>
-              </child>
+              </object>
+            </child>
+    
+          </object>
+        </child>
 
-              <child>
-                <object class="AdwActionRow">
-                  <property name="title" translatable="yes">Memory</property>
-                    <child>
-                      <object class="GtkCheckButton" id="memory_check_button">
-                        <property name="valign">center</property>
-                        <property name="active">True</property>
-                      </object>
-                    </child>
-                </object>
-              </child>
+        <child>
+          <object class="AdwPreferencesGroup">
+            <property name="title" translatable="yes">Display</property>
+            <property name="description" translatable="yes">Control the columns that are displayed</property>
 
-              <child>
-                <object class="AdwActionRow">
-                  <property name="title" translatable="yes">CPU</property>
-                    <child>
-                      <object class="GtkCheckButton" id="cpu_check_button">
-                        <property name="valign">center</property>
-                        <property name="active">True</property>
-                      </object>
-                    </child>
-                </object>
-              </child>
+            <child>
+              <object class="AdwExpanderRow" id="expander_row">
+                <property name="title" translatable="yes">Visible Columns</property>
 
-              <child>
-                <object class="AdwActionRow">
-                  <property name="title" translatable="yes">CPU Time</property>
-                    <child>
-                      <object class="GtkCheckButton" id="cpu_time_check_button">
-                        <property name="valign">center</property>
-                        <property name="active">True</property>
-                      </object>
-                    </child>
-                </object>
-              </child>
+                <child>
+                  <object class="AdwActionRow">
+                    <property name="title" translatable="yes">Process Name</property>
+                      <child>
+                        <object class="GtkCheckButton" id="name_check_button">
+                          <property name="valign">center</property>
+                          <property name="active">True</property>
+                        </object>
+                      </child>
+                  </object>
+                </child>
 
-              <child>
-                <object class="AdwActionRow">
-                  <property name="title" translatable="yes">PPID</property>
-                    <child>
-                      <object class="GtkCheckButton" id="ppid_check_button">
-                        <property name="valign">center</property>
-                        <property name="active">True</property>
-                      </object>
-                    </child>
-                </object>
-              </child>
+                <child>
+                  <object class="AdwActionRow">
+                    <property name="title" translatable="yes">User</property>
+                      <child>
+                        <object class="GtkCheckButton" id="user_check_button">
+                          <property name="valign">center</property>
+                          <property name="active">True</property>
+                        </object>
+                      </child>
+                  </object>
+                </child>
 
-              <child>
-                <object class="AdwActionRow">
-                  <property name="title" translatable="yes">State</property>
-                    <child>
-                      <object class="GtkCheckButton" id="state_check_button">
-                        <property name="valign">center</property>
-                        <property name="active">True</property>
-                      </object>
-                    </child>
-                </object>
-              </child>
+                <child>
+                  <object class="AdwActionRow">
+                    <property name="title" translatable="yes">Memory</property>
+                      <child>
+                        <object class="GtkCheckButton" id="memory_check_button">
+                          <property name="valign">center</property>
+                          <property name="active">True</property>
+                        </object>
+                      </child>
+                  </object>
+                </child>
 
-              <child>
-                <object class="AdwActionRow">
-                  <property name="title" translatable="yes">Nice</property>
-                    <child>
-                      <object class="GtkCheckButton" id="nice_check_button">
-                        <property name="valign">center</property>
-                        <property name="active">True</property>
-                      </object>
-                    </child>
-                </object>
-              </child>
-              
-              <child>
-                <object class="AdwActionRow">
-                  <property name="title" translatable="yes">Priority</property>
-                    <child>
-                      <object class="GtkCheckButton" id="priority_check_button">
-                        <property name="valign">center</property>
-                        <property name="active">True</property>
-                      </object>
-                    </child>
-                </object>
-              </child>
+                <child>
+                  <object class="AdwActionRow">
+                    <property name="title" translatable="yes">CPU</property>
+                      <child>
+                        <object class="GtkCheckButton" id="cpu_check_button">
+                          <property name="valign">center</property>
+                          <property name="active">True</property>
+                        </object>
+                      </child>
+                  </object>
+                </child>
 
-            </object>
-          </child>
+                <child>
+                  <object class="AdwActionRow">
+                    <property name="title" translatable="yes">CPU Time</property>
+                      <child>
+                        <object class="GtkCheckButton" id="cpu_time_check_button">
+                          <property name="valign">center</property>
+                          <property name="active">True</property>
+                        </object>
+                      </child>
+                  </object>
+                </child>
 
+                <child>
+                  <object class="AdwActionRow">
+                    <property name="title" translatable="yes">PPID</property>
+                      <child>
+                        <object class="GtkCheckButton" id="ppid_check_button">
+                          <property name="valign">center</property>
+                          <property name="active">True</property>
+                        </object>
+                      </child>
+                  </object>
+                </child>
 
-        </object>
-      </child>
+                <child>
+                  <object class="AdwActionRow">
+                    <property name="title" translatable="yes">State</property>
+                      <child>
+                        <object class="GtkCheckButton" id="state_check_button">
+                          <property name="valign">center</property>
+                          <property name="active">True</property>
+                        </object>
+                      </child>
+                  </object>
+                </child>
+
+                <child>
+                  <object class="AdwActionRow">
+                    <property name="title" translatable="yes">Nice</property>
+                      <child>
+                        <object class="GtkCheckButton" id="nice_check_button">
+                          <property name="valign">center</property>
+                          <property name="active">True</property>
+                        </object>
+                      </child>
+                  </object>
+                </child>
+                
+                <child>
+                  <object class="AdwActionRow">
+                    <property name="title" translatable="yes">Priority</property>
+                      <child>
+                        <object class="GtkCheckButton" id="priority_check_button">
+                          <property name="valign">center</property>
+                          <property name="active">True</property>
+                        </object>
+                      </child>
+                  </object>
+                </child>
+
+              </object>
+            </child>
+    
+          </object>
+        </child>
 
       </object>
     </child>

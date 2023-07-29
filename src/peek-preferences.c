@@ -30,6 +30,13 @@ struct _PeekPreferences {
 G_DEFINE_TYPE (PeekPreferences, peek_preferences, ADW_TYPE_PREFERENCES_WINDOW)
 
 static void
+refresh_rate_value_changed (GtkSpinButton *self,
+                            gpointer       data)
+{
+  // PeekPreferences *prefs = PEEK_PREFERENCES (data);
+}
+
+static void
 peek_preferences_set_property (GObject      *object,
                                guint         prop_id,
                                const GValue *value,
@@ -131,6 +138,7 @@ peek_preferences_constructed (GObject *object)
       }
     }
   }
+  G_OBJECT_CLASS (peek_preferences_parent_class)->constructed (object);
 }
 
 static void
@@ -186,6 +194,9 @@ peek_preferences_class_init (PeekPreferencesClass *klass)
   gtk_widget_class_bind_template_child (GTK_WIDGET_CLASS (klass),
                                         PeekPreferences,
                                         priority_check_button);
+
+  gtk_widget_class_bind_template_callback (GTK_WIDGET_CLASS (klass),
+                                           refresh_rate_value_changed);
   
   G_OBJECT_CLASS (klass)->set_property = peek_preferences_set_property;
   G_OBJECT_CLASS (klass)->get_property = peek_preferences_get_property;
@@ -209,7 +220,7 @@ peek_preferences_new (PeekWindow *window,
                       GtkWidget  *tree_view)
 {
   return g_object_new (PEEK_TYPE_PREFERENCES,
-                      //  "transient-for", window,
+                       "transient-for", window,
                        "tree-view", tree_view,
                        NULL);
 }
