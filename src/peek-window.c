@@ -26,14 +26,9 @@ static void preferences_activated (GSimpleAction *action,
                                    GVariant      *parameter,
                                    gpointer       data);
 
-static void about_activated (GSimpleAction *action,
-                             GVariant      *parameter,
-                             gpointer       data);
-
 static GActionEntry win_entries [] = 
 {
   { "preferences", preferences_activated, NULL, NULL, NULL },
-  { "about", about_activated, NULL, NULL, NULL },
 };
 
 
@@ -89,37 +84,6 @@ preferences_activated (GSimpleAction *action,
                                       tree_view);
 
   gtk_window_present (GTK_WINDOW (preferences));
-}
-
-static void about_activated (GSimpleAction *action,
-                             GVariant      *parameter,
-                             gpointer       data)
-{
-  // PeekWindow *window = PEEK_WINDOW (data);
-  // GtkWidget *about;
-
-  // const char *developers[] = {
-  //   "Alex Reynolds https://github.com/reyncode",
-  //   NULL
-  // };
-
-  // const char *designers[] = {
-  //   "Alex Reynolds https://github.com/reyncode",
-  //   NULL
-  // };
-
-  // about = g_object_new (ADW_TYPE_ABOUT_WINDOW,
-  //                       "transient-for", window,
-  //                       "application-icon", "org.example.Boxes",
-  //                       "application-name", "Peek",
-  //                       "developer-name", "Alex Reynolds",
-  //                       "version", "1.0.0",
-  //                       "website", "",
-  //                       "developers", developers,
-  //                       "designers", designers,
-  //                       NULL);
-                        
-  // gtk_window_present (GTK_WINDOW (about));
 }
 
 static void
