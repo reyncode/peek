@@ -2,7 +2,7 @@
 #include "peek-tree-view.h"
 #include "peek-tree-model.h"
 
-#define RESOURCE_PATH "/com/github/reyncode/peek/ui/preferences.ui"
+#define RESOURCE_PATH "/com/github/reyncode/peek/data/ui/preferences.ui"
 
 enum {
   PROP_TREE_VIEW = 1,

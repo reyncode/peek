@@ -4,7 +4,7 @@
 #include "peek-process.h"
 #include "peek-process-view.h"
 
-#define TREE_VIEW_RESOURCE_PATH "/com/github/reyncode/peek/ui/tree-view.ui"
+#define TREE_VIEW_RESOURCE_PATH "/com/github/reyncode/peek/data/ui/tree-view.ui"
 
 struct _PeekTreeView {
   GtkBox  parent;

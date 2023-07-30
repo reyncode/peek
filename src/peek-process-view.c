@@ -3,7 +3,7 @@
 #include "peek-tree-model.h"
 #include "peek-process.h"
 
-#define RESOURCE_PATH "/com/github/reyncode/peek/ui/process-view.ui"
+#define RESOURCE_PATH "/com/github/reyncode/peek/data/ui/process-view.ui"
 
 enum {
   PROP_PID = 1,

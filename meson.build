@@ -2,6 +2,14 @@ project('peek', 'c')
 
 gnome = import('gnome')
 
+subdir('data')
+
+resources = gnome.compile_resources(
+    'resources',
+    'peek.gresource.xml',
+    c_name: 'resources'
+)
+
 data_dir = join_paths(meson.current_source_dir(), 'data')
 
 prefix = get_option('prefix')
@@ -15,5 +23,4 @@ deps = [
   libgtop,
 ]
 
-subdir('data')
 subdir('src')
