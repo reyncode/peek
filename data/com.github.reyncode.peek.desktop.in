@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Peek
+Exec=peek
+Icon=org.gnome.Adwaita1.Demo
+Keywords=peek;
+Terminal=false
+Type=Application
+Categories=GTK;
+StartupNotify=true
+NoDisplay=true

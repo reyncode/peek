@@ -11,7 +11,7 @@
 
         <child>
           <object class="AdwHeaderBar">
-            <property name="decoration-layout">icon:minimize,maximize,close</property>
+            <property name="decoration-layout">:minimize,maximize,close</property>
 
             <child type="title">
               <object class="GtkSearchEntry" id="search_entry">

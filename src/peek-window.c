@@ -131,6 +131,10 @@ peek_window_init (PeekWindow *self)
 
   gtk_search_entry_set_key_capture_widget (GTK_SEARCH_ENTRY (self->search_entry),
                                            GTK_WIDGET (self));
+
+  GtkIconTheme *theme = gtk_icon_theme_get_for_display (gdk_display_get_default ());
+  gtk_icon_theme_add_resource_path (theme, "/com/github/reyncode/peek/data" );
+  gtk_window_set_default_icon_name ("org.gnome.Adwaita1.Demo");
 }
 
 static void
