@@ -12,9 +12,13 @@
 #define REFRESH_INTERVAL 2
 
 static guint proc_update_signal;
+static guint proc_interval_signal;
 
 struct _PeekApplication {
   AdwApplication parent;
+
+  guint         timeout_id;
+  guint         interval;
 
   GtkTreeModel *model;
   GHashTable   *proc_table;
@@ -24,8 +28,6 @@ struct _PeekApplication {
   guint64       cpu_time_total;
   guint64       cpu_time_total_last;
   guint64       cpu_frequency;
-
-  guint timeout;
 };
 
 G_DEFINE_TYPE (PeekApplication, peek_application, ADW_TYPE_APPLICATION)
@@ -66,7 +68,7 @@ peek_application_startup (GApplication *self)
   // populate immediately
   peek_process_updater (app);
 
-  app->timeout = g_timeout_add_seconds (REFRESH_INTERVAL, peek_process_updater, app);
+  app->timeout_id = g_timeout_add_seconds (app->interval, peek_process_updater, app);
 }
 
 static void
@@ -81,6 +83,18 @@ peek_application_activate (GApplication *self)
   app->search_entry = peek_window_get_search_entry (window);
   
   gtk_window_present (GTK_WINDOW (window));
+}
+
+static void
+restart_timeout_cb (gpointer data)
+{
+  PeekApplication *self = PEEK_APPLICATION (data);
+
+  // cancel the old
+  g_source_remove (self->timeout_id);
+
+  // start the new
+  self->timeout_id = g_timeout_add_seconds (self->interval, peek_process_updater, self);
 }
 
 static guint
@@ -98,6 +112,8 @@ get_system_core_count ()
 static void
 peek_application_init (PeekApplication *self)
 {
+  self->interval = 2; // integrate with GSetting
+
   self->model = peek_tree_model_new (self);
   
   self->proc_table = g_hash_table_new_full (g_int_hash,
@@ -112,6 +128,8 @@ peek_application_init (PeekApplication *self)
   self->cpu_time_total = 0;
   self->cpu_time_total_last = 0;
   self->cpu_frequency = 0;
+
+  g_signal_connect (self, "interval-update", G_CALLBACK (restart_timeout_cb), self);
 }
 
 static void
@@ -126,6 +144,16 @@ peek_application_class_init (PeekApplicationClass *klass)
                                      NULL,
                                      G_TYPE_NONE,
                                      0);
+
+  proc_interval_signal = g_signal_new ("interval-update",
+                                       G_TYPE_FROM_CLASS (klass),
+                                       G_SIGNAL_RUN_LAST | G_SIGNAL_NO_RECURSE | G_SIGNAL_NO_HOOKS,
+                                       0,
+                                       NULL,
+                                       NULL,
+                                       NULL,
+                                       G_TYPE_NONE,
+                                       0);
 
 
   G_OBJECT_CLASS (klass)->finalize = peek_application_finalize;
@@ -207,6 +235,25 @@ peek_application_set_cpu_frequency (PeekApplication *self,
   g_return_if_fail (PEEK_IS_APPLICATION (self));
 
   self->cpu_frequency = value;
+}
+
+guint
+peek_application_get_interval (PeekApplication *self)
+{
+  g_return_val_if_fail (PEEK_IS_APPLICATION (self), 0);
+
+  return self->interval;
+}
+
+void
+peek_application_set_interval (PeekApplication *self,
+                               guint            value)
+{
+  g_return_if_fail (PEEK_IS_APPLICATION (self));
+
+  self->interval = value;
+
+  g_signal_emit_by_name (self, "interval-update");
 }
 
 GtkWidget *

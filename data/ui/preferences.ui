@@ -7,14 +7,14 @@
         <child>
           <object class="AdwPreferencesGroup">
             <property name="title" translatable="yes">Updates</property>
-            <property name="description" translatable="yes">Control the rate at which the tables are refreshed</property>
+            <property name="description" translatable="yes">Control the interval at which the tables are updated with new data</property>
 
             <child>
               <object class="AdwActionRow">
-                <property name="title" translatable="yes">Refresh Rate</property>
+                <property name="title" translatable="yes">Interval</property>
 
                 <child>
-                  <object class="GtkSpinButton">
+                  <object class="GtkSpinButton" id="interval_spin_button">
                     <property name="valign">center</property>
                     <property name="numeric">True</property>
                     <property name="adjustment">
@@ -26,7 +26,7 @@
                         <property name="step-increment">1</property>
                       </object>
                     </property>
-                    <signal name="value-changed" handler="refresh_rate_value_changed"/>
+                    <signal name="value-changed" handler="interval_value_changed"/>
                   </object>
                 </child>
 

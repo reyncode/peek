@@ -245,6 +245,7 @@ peek_tree_view_create_columns (GtkTreeView *tree_view)
                                                      NULL);
   gtk_tree_view_column_set_sort_column_id (column, COLUMN_NAME);
   gtk_tree_view_column_set_reorderable (column, TRUE);
+  gtk_tree_view_column_set_expand (column, TRUE);
   gtk_tree_view_append_column (tree_view, column);
 
   // ID
@@ -255,6 +256,7 @@ peek_tree_view_create_columns (GtkTreeView *tree_view)
                                                      NULL);
   gtk_tree_view_column_set_sort_column_id (column, COLUMN_ID);
   gtk_tree_view_column_set_reorderable (column, TRUE);
+  gtk_tree_view_column_set_expand (column, TRUE);
   gtk_tree_view_append_column (tree_view, column);
 
   // User
@@ -265,6 +267,7 @@ peek_tree_view_create_columns (GtkTreeView *tree_view)
                                                      NULL);
   gtk_tree_view_column_set_sort_column_id (column, COLUMN_USER);
   gtk_tree_view_column_set_reorderable (column, TRUE);
+  gtk_tree_view_column_set_expand (column, TRUE);
   gtk_tree_view_append_column (tree_view, column);
 
   // Memory
@@ -282,6 +285,7 @@ peek_tree_view_create_columns (GtkTreeView *tree_view)
   g_object_set (G_OBJECT (renderer), "xalign", 1.0f, NULL); // right alignment
   gtk_tree_view_column_set_sort_column_id (column, COLUMN_MEMORY);
   gtk_tree_view_column_set_reorderable (column, TRUE);
+  gtk_tree_view_column_set_expand (column, TRUE);
   gtk_tree_view_append_column (tree_view, column);
   
   // CPU %
@@ -299,6 +303,7 @@ peek_tree_view_create_columns (GtkTreeView *tree_view)
   g_object_set (G_OBJECT (renderer), "xalign", 1.0f, NULL); // right alignment
   gtk_tree_view_column_set_sort_column_id (column, COLUMN_CPU_P);
   gtk_tree_view_column_set_reorderable (column, TRUE);
+  gtk_tree_view_column_set_expand (column, TRUE);
   gtk_tree_view_append_column (tree_view, column);
 
   // CPU Time
@@ -316,6 +321,7 @@ peek_tree_view_create_columns (GtkTreeView *tree_view)
   g_object_set (G_OBJECT (renderer), "xalign", 1.0f, NULL); // right alignment
   gtk_tree_view_column_set_sort_column_id (column, COLUMN_CPU_TIME);
   gtk_tree_view_column_set_reorderable (column, TRUE);
+  gtk_tree_view_column_set_expand (column, TRUE);
   gtk_tree_view_append_column (tree_view, column);
 
   // PPID
@@ -326,6 +332,7 @@ peek_tree_view_create_columns (GtkTreeView *tree_view)
                                                      NULL);
   gtk_tree_view_column_set_sort_column_id (column, COLUMN_PPID);
   gtk_tree_view_column_set_reorderable (column, TRUE);
+  gtk_tree_view_column_set_expand (column, TRUE);
   gtk_tree_view_append_column (tree_view, column);
 
   // State
@@ -337,6 +344,7 @@ peek_tree_view_create_columns (GtkTreeView *tree_view)
                                                     
   gtk_tree_view_column_set_sort_column_id (column, COLUMN_STATE);
   gtk_tree_view_column_set_reorderable (column, TRUE);
+  gtk_tree_view_column_set_expand (column, TRUE);
   gtk_tree_view_append_column (tree_view, column);
 
   // Nice
@@ -348,6 +356,7 @@ peek_tree_view_create_columns (GtkTreeView *tree_view)
                                                     
   gtk_tree_view_column_set_sort_column_id (column, COLUMN_NICE);
   gtk_tree_view_column_set_reorderable (column, TRUE);
+  gtk_tree_view_column_set_expand (column, TRUE);
   gtk_tree_view_append_column (tree_view, column);
 
   // Priority
@@ -368,6 +377,7 @@ peek_tree_view_create_columns (GtkTreeView *tree_view)
 
   gtk_tree_view_column_set_sort_column_id (column, COLUMN_PRIORITY);
   gtk_tree_view_column_set_reorderable (column, TRUE);
+  gtk_tree_view_column_set_expand (column, TRUE);
   gtk_tree_view_append_column (tree_view, column);
 }
 

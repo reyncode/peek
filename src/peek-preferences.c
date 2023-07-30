@@ -16,6 +16,8 @@ struct _PeekPreferences {
 
   GtkWidget *tree_view;
 
+  GtkWidget *interval_spin_button;
+
   GtkWidget *name_check_button;
   GtkWidget *user_check_button;
   GtkWidget *memory_check_button;
@@ -30,10 +32,13 @@ struct _PeekPreferences {
 G_DEFINE_TYPE (PeekPreferences, peek_preferences, ADW_TYPE_PREFERENCES_WINDOW)
 
 static void
-refresh_rate_value_changed (GtkSpinButton *self,
+interval_value_changed (GtkSpinButton *self,
                             gpointer       data)
 {
-  // PeekPreferences *prefs = PEEK_PREFERENCES (data);
+  PeekApplication *app;
+
+  app = peek_application_get_instance ();
+  peek_application_set_interval (app, gtk_spin_button_get_value_as_int (self));
 }
 
 static void
@@ -151,6 +156,15 @@ static void
 peek_preferences_init (PeekPreferences *self)
 {
   gtk_widget_init_template (GTK_WIDGET (self));
+
+  PeekApplication *app;
+  guint interval;
+
+  app = peek_application_get_instance ();
+  interval = peek_application_get_interval (app);
+
+  gtk_spin_button_set_value (GTK_SPIN_BUTTON (self->interval_spin_button),
+                             interval);
 }
 
 static void
@@ -158,6 +172,10 @@ peek_preferences_class_init (PeekPreferencesClass *klass)
 {
   gtk_widget_class_set_template_from_resource (GTK_WIDGET_CLASS (klass),
                                                RESOURCE_PATH);
+
+  gtk_widget_class_bind_template_child (GTK_WIDGET_CLASS (klass),
+                                        PeekPreferences,
+                                        interval_spin_button);
 
   gtk_widget_class_bind_template_child (GTK_WIDGET_CLASS (klass),
                                         PeekPreferences,
@@ -196,7 +214,7 @@ peek_preferences_class_init (PeekPreferencesClass *klass)
                                         priority_check_button);
 
   gtk_widget_class_bind_template_callback (GTK_WIDGET_CLASS (klass),
-                                           refresh_rate_value_changed);
+                                           interval_value_changed);
   
   G_OBJECT_CLASS (klass)->set_property = peek_preferences_set_property;
   G_OBJECT_CLASS (klass)->get_property = peek_preferences_get_property;
