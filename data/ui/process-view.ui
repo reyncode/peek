@@ -1,103 +1,184 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
-  <template class="PeekProcessView" parent="AdwPreferencesWindow">
-    <property name="default-width">300</property>
-    <property name="default-height">400</property>
-    <child>
-      <object class="AdwPreferencesPage">
+  <template class="PeekProcessView" parent="AdwWindow">
+    <property name="default-width">400</property>
+    <property name="default-height">450</property>
+    <property name="content">
+      <object class="GtkBox">
+        <property name="orientation">vertical</property>
 
-      <child>
-        <object class="AdwPreferencesGroup">
-          <property name="title" translatable="yes">Details</property>
+        <child>
+          <object class="AdwHeaderBar">
+            <property name="decoration-layout">:close</property>
+          </object>
+        </child>
 
-          <child>
-            <object class="AdwActionRow">
-              <property name="title" translatable="yes">Name</property>
+        <child>
+          <object class="AdwStatusPage">
+            <property name="child">
+              <object class="AdwClamp">
+                <property name="maximum-size">300</property>
+                <property name="tightening-threshold">250</property>
+                <property name="child">
+                  <object class="GtkBox">
+                    <property name="orientation">vertical</property>
+                    <property name="spacing">12</property>
 
-                <child>
-                  <object class="GtkLabel" id="name_label">
-                    <property name="label"></property>
-                    <property name="valign">center</property>
+                    <child>
+                      <object class="AdwPreferencesGroup">
+                        <property name="title" translatable="yes">Details</property>
+
+                        <child>
+                          <object class="AdwActionRow">
+                            <property name="title" translatable="yes">Name</property>
+
+                              <child>
+                                <object class="GtkLabel" id="name_label">
+                                  <property name="label"></property>
+                                  <property name="valign">center</property>
+                                </object>
+                              </child>
+
+                          </object>
+                        </child>
+
+                        <child>
+                          <object class="AdwActionRow">
+                            <property name="title" translatable="yes">PID</property>
+
+                              <child>
+                                <object class="GtkLabel" id="pid_label">
+                                  <property name="label"></property>
+                                  <property name="valign">center</property>
+                                </object>
+                              </child>
+
+                          </object>
+                        </child>
+
+                        <child>
+                          <object class="AdwActionRow">
+                            <property name="title" translatable="yes">PPID</property>
+
+                              <child>
+                                <object class="GtkLabel" id="ppid_label">
+                                  <property name="label"></property>
+                                  <property name="valign">center</property>
+                                </object>
+                              </child>
+
+                          </object>
+                        </child>
+
+                        <child>
+                          <object class="AdwActionRow">
+                            <property name="title" translatable="yes">User</property>
+
+                              <child>
+                                <object class="GtkLabel" id="user_label">
+                                  <property name="label"></property>
+                                  <property name="valign">center</property>
+                                </object>
+                              </child>
+
+                          </object>
+                        </child>
+
+                        <child>
+                          <object class="AdwActionRow">
+                            <property name="title" translatable="yes">Status</property>
+
+                              <child>
+                                <object class="GtkLabel" id="status_label">
+                                  <property name="label"></property>
+                                  <property name="valign">center</property>
+                                </object>
+                              </child>
+
+                          </object>
+                        </child>
+
+                        <child>
+                          <object class="AdwActionRow">
+                            <property name="title" translatable="yes">Nice</property>
+
+                              <child>
+                                <object class="GtkLabel" id="nice_label">
+                                  <property name="label"></property>
+                                  <property name="valign">center</property>
+                                </object>
+                              </child>
+
+                          </object>
+                        </child>
+
+                        <child>
+                          <object class="AdwActionRow">
+                            <property name="title" translatable="yes">Priority</property>
+
+                              <child>
+                                <object class="GtkLabel" id="priority_label">
+                                  <property name="label"></property>
+                                  <property name="valign">center</property>
+                                </object>
+                              </child>
+
+                          </object>
+                        </child>
+
+                        <child>
+                          <object class="AdwActionRow">
+                            <property name="title" translatable="yes">Memory</property>
+
+                              <child>
+                                <object class="GtkLabel" id="memory_label">
+                                  <property name="label"></property>
+                                  <property name="valign">center</property>
+                                </object>
+                              </child>
+
+                          </object>
+                        </child>
+
+                        <child>
+                          <object class="AdwActionRow">
+                            <property name="title" translatable="yes">CPU Usage</property>
+
+                              <child>
+                                <object class="GtkLabel" id="cpu_usage_label">
+                                  <property name="label"></property>
+                                  <property name="valign">center</property>
+                                </object>
+                              </child>
+
+                          </object>
+                        </child>
+
+                        <child>
+                          <object class="AdwActionRow">
+                            <property name="title" translatable="yes">CPU Time</property>
+
+                              <child>
+                                <object class="GtkLabel" id="cpu_time_label">
+                                  <property name="label"></property>
+                                  <property name="valign">center</property>
+                                </object>
+                              </child>
+
+                          </object>
+                        </child>
+
+                      </object>
+                    </child>
+
                   </object>
-                </child>
-
-            </object>
-          </child>
-
-          <child>
-            <object class="AdwActionRow">
-              <property name="title" translatable="yes">PID</property>
-
-                <child>
-                  <object class="GtkLabel" id="pid_label">
-                    <property name="label"></property>
-                    <property name="valign">center</property>
-                  </object>
-                </child>
-
-            </object>
-          </child>
-
-          <child>
-            <object class="AdwActionRow">
-              <property name="title" translatable="yes">User</property>
-
-                <child>
-                  <object class="GtkLabel" id="user_label">
-                    <property name="label"></property>
-                    <property name="valign">center</property>
-                  </object>
-                </child>
-
-            </object>
-          </child>
-
-          <child>
-            <object class="AdwActionRow">
-              <property name="title" translatable="yes">Status</property>
-
-                <child>
-                  <object class="GtkLabel" id="status_label">
-                    <property name="label"></property>
-                    <property name="valign">center</property>
-                  </object>
-                </child>
-
-            </object>
-          </child>
-
-          <child>
-            <object class="AdwActionRow">
-              <property name="title" translatable="yes">Memory</property>
-
-                <child>
-                  <object class="GtkLabel" id="memory_label">
-                    <property name="label"></property>
-                    <property name="valign">center</property>
-                  </object>
-                </child>
-
-            </object>
-          </child>
-
-          <child>
-            <object class="AdwActionRow">
-              <property name="title" translatable="yes">CPU Usage</property>
-
-                <child>
-                  <object class="GtkLabel" id="cpu_usage_label">
-                    <property name="label"></property>
-                    <property name="valign">center</property>
-                  </object>
-                </child>
-
-            </object>
-          </child>
-
-        </object>
-      </child>
+                </property>
+              </object>
+            </property>
+          </object>
+        </child>
 
       </object>
-    </child>
+    </property>
   </template>
 </interface>

@@ -1,6 +1,7 @@
 #include "peek-process-view.h"
 #include "peek-application.h"
 #include "peek-tree-model.h"
+#include "peek-tree-view.h"
 #include "peek-process.h"
 
 #define RESOURCE_PATH "/com/github/reyncode/peek/data/ui/process-view.ui"
@@ -13,27 +14,32 @@ enum {
 static GParamSpec *process_view_props[N_PROPERTIES] = { NULL, };
 
 struct _PeekProcessView {
-  AdwPreferencesWindow parent;
+  AdwWindow parent;
 
   pid_t pid;
 
   GtkWidget *name_label;
   GtkWidget *pid_label;
+  GtkWidget *ppid_label;
   GtkWidget *user_label;
   GtkWidget *status_label;
   GtkWidget *memory_label;
   GtkWidget *cpu_usage_label;
+  GtkWidget *cpu_time_label;
+  GtkWidget *priority_label;
+  GtkWidget *nice_label;
 };
 
-G_DEFINE_TYPE (PeekProcessView, peek_process_view, ADW_TYPE_PREFERENCES_WINDOW)
+G_DEFINE_TYPE (PeekProcessView, peek_process_view, ADW_TYPE_WINDOW)
 
 static void
 proc_update_cb (PeekApplication *app,
                 gpointer         data)
 {
   PeekProcessView *view = PEEK_PROCESS_VIEW (data);
-  GHashTable *table;
-  ProcData *proc;
+  guint64          frequency;
+  GHashTable      *table;
+  ProcData        *proc;
 
   table = peek_application_get_proc_table (app);
   proc = g_hash_table_lookup (table, &view->pid);
@@ -53,16 +59,28 @@ proc_update_cb (PeekApplication *app,
     return;
   }
   
+  gchar *nice_label = g_strdup_printf ("%d", proc->nice);
   gchar *memory_formatted = g_format_size (proc->memory);
   gchar *cpu_usage_formatted = g_strdup_printf ("%.2f", proc->cpu_usage);
 
+  frequency = peek_application_get_cpu_frequency (app);
+
+  guint time = proc->cpu_time;
+  time = 100 * time / frequency;
+  gchar *cpu_time_formatted = parse_duration_centiseconds (time);
+
+  gtk_label_set_label (GTK_LABEL (view->nice_label), nice_label);
+  gtk_label_set_label (GTK_LABEL (view->priority_label), parse_priority_from_nice (proc->nice));
   gtk_label_set_label (GTK_LABEL (view->user_label), parse_user_from_uid (proc->uid));
   gtk_label_set_label (GTK_LABEL (view->status_label), parse_proc_state (proc->state));
   gtk_label_set_label (GTK_LABEL (view->memory_label), memory_formatted);
   gtk_label_set_label (GTK_LABEL (view->cpu_usage_label), cpu_usage_formatted);
+  gtk_label_set_label (GTK_LABEL (view->cpu_time_label), cpu_time_formatted);
 
+  g_clear_pointer (&nice_label, g_free);
   g_clear_pointer (&memory_formatted, g_free);
   g_clear_pointer (&cpu_usage_formatted, g_free);
+  g_clear_pointer (&cpu_time_formatted, g_free);
 }
 
 static void
@@ -121,31 +139,49 @@ peek_process_view_constructed (GObject *object)
 {
   PeekProcessView *self = PEEK_PROCESS_VIEW (object);
   PeekApplication *app;
-  GHashTable *table;
-  ProcData *proc;
+  guint64          frequency;
+  GHashTable      *table;
+  ProcData        *proc;
 
   app = peek_application_get_instance ();
+  frequency = peek_application_get_cpu_frequency (app);
   table = peek_application_get_proc_table (app);
   proc = g_hash_table_lookup (table, &self->pid);
 
   gchar *title = g_strdup_printf ("%s (%d)", proc->name, proc->pid);
   gchar *pid_label = g_strdup_printf ("%d", proc->pid);
+  gchar *ppid_label = g_strdup_printf ("%d", proc->ppid);
+  gchar *nice_label = g_strdup_printf ("%d", proc->nice);
   gchar *memory_formatted = g_format_size (proc->memory);
   gchar *cpu_usage_formatted = g_strdup_printf ("%.2f", proc->cpu_usage);
 
+  guint time = proc->cpu_time;
+  time = 100 * time / frequency;
+  gchar *cpu_time_formatted = parse_duration_centiseconds (time);
+
   gtk_window_set_title (GTK_WINDOW (self), title);
 
+  // static
   gtk_label_set_label (GTK_LABEL (self->name_label), proc->name);
   gtk_label_set_label (GTK_LABEL (self->pid_label), pid_label);
+  gtk_label_set_label (GTK_LABEL (self->ppid_label), ppid_label);
+
+  // dynamic
+  gtk_label_set_label (GTK_LABEL (self->nice_label), nice_label);
+  gtk_label_set_label (GTK_LABEL (self->priority_label), parse_priority_from_nice (proc->nice));
   gtk_label_set_label (GTK_LABEL (self->user_label), parse_user_from_uid (proc->uid));
   gtk_label_set_label (GTK_LABEL (self->status_label), parse_proc_state (proc->state));
   gtk_label_set_label (GTK_LABEL (self->memory_label), memory_formatted);
   gtk_label_set_label (GTK_LABEL (self->cpu_usage_label), cpu_usage_formatted);
+  gtk_label_set_label (GTK_LABEL (self->cpu_time_label), cpu_time_formatted);
 
   g_clear_pointer (&title, g_free);
   g_clear_pointer (&pid_label, g_free);
+  g_clear_pointer (&ppid_label, g_free);
+  g_clear_pointer (&nice_label, g_free);
   g_clear_pointer (&memory_formatted, g_free);
   g_clear_pointer (&cpu_usage_formatted, g_free);
+  g_clear_pointer (&cpu_time_formatted, g_free);
 
   G_OBJECT_CLASS (peek_process_view_parent_class)->constructed (object);
 }
@@ -178,6 +214,10 @@ peek_process_view_class_init (PeekProcessViewClass *klass)
 
   gtk_widget_class_bind_template_child (GTK_WIDGET_CLASS (klass),
                                         PeekProcessView,
+                                        ppid_label);
+
+  gtk_widget_class_bind_template_child (GTK_WIDGET_CLASS (klass),
+                                        PeekProcessView,
                                         user_label);
 
   gtk_widget_class_bind_template_child (GTK_WIDGET_CLASS (klass),
@@ -191,6 +231,18 @@ peek_process_view_class_init (PeekProcessViewClass *klass)
   gtk_widget_class_bind_template_child (GTK_WIDGET_CLASS (klass),
                                         PeekProcessView,
                                         cpu_usage_label);
+
+  gtk_widget_class_bind_template_child (GTK_WIDGET_CLASS (klass),
+                                        PeekProcessView,
+                                        cpu_time_label);
+
+  gtk_widget_class_bind_template_child (GTK_WIDGET_CLASS (klass),
+                                        PeekProcessView,
+                                        nice_label);
+
+  gtk_widget_class_bind_template_child (GTK_WIDGET_CLASS (klass),
+                                        PeekProcessView,
+                                        priority_label);
   
   G_OBJECT_CLASS (klass)->set_property = peek_process_view_set_property;
   G_OBJECT_CLASS (klass)->get_property = peek_process_view_get_property;

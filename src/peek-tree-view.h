@@ -14,4 +14,8 @@ void peek_tree_view_set_search_entry (PeekTreeView *peek_tree_view,
 
 GtkWidget *peek_tree_view_get_tree_view (PeekTreeView *peek_tree_view);
 
+const gchar *parse_priority_from_nice (gint nice);
+
+gchar *parse_duration_centiseconds (guint centiseconds);
+
 G_END_DECLS

@@ -93,7 +93,7 @@ percentage_cell_data_func (GtkTreeViewColumn *column,
   g_free (str);
 }
 
-static gchar *
+const gchar *
 parse_priority_from_nice (gint nice)
 {
   if (nice < -7)
@@ -118,7 +118,7 @@ divide (guint *q,
   return *q != 0;
 }
 
-static gchar *
+gchar *
 parse_duration_centiseconds (guint centiseconds)
 {
   guint weeks = 0, days = 0, hours = 0, minutes = 0, seconds = 0;
