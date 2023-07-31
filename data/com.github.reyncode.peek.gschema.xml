@@ -11,5 +11,45 @@
       <summary>Show Process Name</summary>
       <description>Whether to show the process name in the table</description>
     </key>
+    <key name="show-user" type="b">
+      <default>true</default>
+      <summary>Show User</summary>
+      <description>Whether to show the process user in the table</description>
+    </key>
+    <key name="show-memory" type="b">
+      <default>true</default>
+      <summary>Show Memory</summary>
+      <description>Whether to show the memory usage in the table</description>
+    </key>
+    <key name="show-cpu" type="b">
+      <default>true</default>
+      <summary>Show CPU</summary>
+      <description>Whether to show the cpu usage in the table</description>
+    </key>
+    <key name="show-cpu-time" type="b">
+      <default>true</default>
+      <summary>Show CPU Time</summary>
+      <description>Whether to show the cpu time in the table</description>
+    </key>
+    <key name="show-ppid" type="b">
+      <default>true</default>
+      <summary>Show PPID</summary>
+      <description>Whether to show the process PPID in the table</description>
+    </key>
+    <key name="show-state" type="b">
+      <default>true</default>
+      <summary>Show State</summary>
+      <description>Whether to show the process state in the table</description>
+    </key>
+    <key name="show-nice" type="b">
+      <default>true</default>
+      <summary>Show Nice</summary>
+      <description>Whether to show nice in the table</description>
+    </key>
+    <key name="show-priority" type="b">
+      <default>true</default>
+      <summary>Show Priority</summary>
+      <description>Whether to show the process priority in the table</description>
+    </key>
   </schema>
 </schemalist>

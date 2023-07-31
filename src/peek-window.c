@@ -76,12 +76,8 @@ preferences_activated (GSimpleAction *action,
 {
   PeekWindow *window = PEEK_WINDOW (data);
   PeekPreferences *preferences;
-  GtkWidget *tree_view;
 
-  tree_view = peek_tree_view_get_tree_view (PEEK_TREE_VIEW (window->peek_tree_view));
-
-  preferences = peek_preferences_new (window,
-                                      tree_view);
+  preferences = peek_preferences_new (window);
 
   gtk_window_present (GTK_WINDOW (preferences));
 }

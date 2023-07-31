@@ -9,18 +9,12 @@
 struct _PeekTreeView {
   GtkBox  parent;
 
+  GSettings *settings;
+
   GtkWidget *tree_view;
 };
 
 G_DEFINE_TYPE (PeekTreeView, peek_tree_view, GTK_TYPE_BOX)
-
-GtkWidget *
-peek_tree_view_get_tree_view (PeekTreeView *peek_tree_view)
-{
-  g_return_val_if_fail (PEEK_IS_TREE_VIEW (peek_tree_view), NULL);
-
-  return peek_tree_view->tree_view;
-}
 
 static void
 size_cell_data_func (GtkTreeViewColumn *column,
@@ -228,9 +222,10 @@ duration_cell_data_func (GtkTreeViewColumn *column,
   g_free (str);
 }
 
-static void // return array of GtkWidget *
-peek_tree_view_create_columns (GtkTreeView *tree_view)
+static void
+peek_tree_view_create_columns (PeekTreeView *self)
 {  
+  GtkTreeView       *tree_view = GTK_TREE_VIEW (self->tree_view);
   GtkTreeModel      *model;
   GtkCellRenderer   *renderer;
   GtkTreeViewColumn *column;
@@ -247,6 +242,10 @@ peek_tree_view_create_columns (GtkTreeView *tree_view)
   gtk_tree_view_column_set_reorderable (column, TRUE);
   gtk_tree_view_column_set_expand (column, TRUE);
   gtk_tree_view_append_column (tree_view, column);
+
+  g_settings_bind (self->settings, "show-name",
+                   column, "visible",
+                   G_SETTINGS_BIND_DEFAULT);
 
   // ID
   renderer = gtk_cell_renderer_text_new ();
@@ -270,6 +269,10 @@ peek_tree_view_create_columns (GtkTreeView *tree_view)
   gtk_tree_view_column_set_expand (column, TRUE);
   gtk_tree_view_append_column (tree_view, column);
 
+  g_settings_bind (self->settings, "show-user",
+                   column, "visible",
+                   G_SETTINGS_BIND_DEFAULT);
+
   // Memory
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes ("Memory",
@@ -287,6 +290,10 @@ peek_tree_view_create_columns (GtkTreeView *tree_view)
   gtk_tree_view_column_set_reorderable (column, TRUE);
   gtk_tree_view_column_set_expand (column, TRUE);
   gtk_tree_view_append_column (tree_view, column);
+
+  g_settings_bind (self->settings, "show-memory",
+                   column, "visible",
+                   G_SETTINGS_BIND_DEFAULT);
   
   // CPU %
   renderer = gtk_cell_renderer_text_new ();
@@ -306,6 +313,10 @@ peek_tree_view_create_columns (GtkTreeView *tree_view)
   gtk_tree_view_column_set_expand (column, TRUE);
   gtk_tree_view_append_column (tree_view, column);
 
+  g_settings_bind (self->settings, "show-cpu",
+                   column, "visible",
+                   G_SETTINGS_BIND_DEFAULT);
+
   // CPU Time
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes ("CPU Time",
@@ -324,6 +335,10 @@ peek_tree_view_create_columns (GtkTreeView *tree_view)
   gtk_tree_view_column_set_expand (column, TRUE);
   gtk_tree_view_append_column (tree_view, column);
 
+  g_settings_bind (self->settings, "show-cpu-time",
+                   column, "visible",
+                   G_SETTINGS_BIND_DEFAULT);
+
   // PPID
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes ("PPID",
@@ -334,6 +349,10 @@ peek_tree_view_create_columns (GtkTreeView *tree_view)
   gtk_tree_view_column_set_reorderable (column, TRUE);
   gtk_tree_view_column_set_expand (column, TRUE);
   gtk_tree_view_append_column (tree_view, column);
+
+  g_settings_bind (self->settings, "show-ppid",
+                   column, "visible",
+                   G_SETTINGS_BIND_DEFAULT);
 
   // State
   renderer = gtk_cell_renderer_text_new ();
@@ -347,6 +366,10 @@ peek_tree_view_create_columns (GtkTreeView *tree_view)
   gtk_tree_view_column_set_expand (column, TRUE);
   gtk_tree_view_append_column (tree_view, column);
 
+  g_settings_bind (self->settings, "show-state",
+                   column, "visible",
+                   G_SETTINGS_BIND_DEFAULT);
+
   // Nice
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes ("Nice",
@@ -358,6 +381,10 @@ peek_tree_view_create_columns (GtkTreeView *tree_view)
   gtk_tree_view_column_set_reorderable (column, TRUE);
   gtk_tree_view_column_set_expand (column, TRUE);
   gtk_tree_view_append_column (tree_view, column);
+
+  g_settings_bind (self->settings, "show-nice",
+                   column, "visible",
+                   G_SETTINGS_BIND_DEFAULT);
 
   // Priority
   renderer = gtk_cell_renderer_text_new ();
@@ -379,6 +406,10 @@ peek_tree_view_create_columns (GtkTreeView *tree_view)
   gtk_tree_view_column_set_reorderable (column, TRUE);
   gtk_tree_view_column_set_expand (column, TRUE);
   gtk_tree_view_append_column (tree_view, column);
+
+  g_settings_bind (self->settings, "show-priority",
+                   column, "visible",
+                   G_SETTINGS_BIND_DEFAULT);
 }
 
 void
@@ -424,6 +455,10 @@ process_inspector (GtkTreeView       *self,
 static void
 peek_tree_view_finalize (GObject *object)
 {
+  PeekTreeView *self = PEEK_TREE_VIEW (object);
+
+  g_clear_object (&self->settings);
+
   G_OBJECT_CLASS (peek_tree_view_parent_class)->finalize (object);
 }
 
@@ -434,6 +469,8 @@ peek_tree_view_init (PeekTreeView *self)
 
   gtk_widget_init_template (GTK_WIDGET (self));
 
+  self->settings = g_settings_new ("com.github.reyncode.peek");
+
   PeekApplication *application;
   application = peek_application_get_instance ();
 
@@ -442,7 +479,7 @@ peek_tree_view_init (PeekTreeView *self)
 
   gtk_tree_view_set_model (GTK_TREE_VIEW (self->tree_view), model);
 
-  peek_tree_view_create_columns (GTK_TREE_VIEW (self->tree_view));
+  peek_tree_view_create_columns (self);
 
   g_signal_connect (GTK_TREE_VIEW (self->tree_view),
                     "row-activated",

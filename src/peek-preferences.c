@@ -4,15 +4,10 @@
 
 #define RESOURCE_PATH "/com/github/reyncode/peek/data/ui/preferences.ui"
 
-enum {
-  PROP_TREE_VIEW = 1,
-  N_PROPERTIES
-};
-
-static GParamSpec *preferences_props[N_PROPERTIES] = { NULL, };
-
 struct _PeekPreferences {
   AdwPreferencesWindow parent;
+
+  GSettings *settings;
 
   GtkWidget *tree_view;
 
@@ -42,113 +37,52 @@ interval_value_changed (GtkSpinButton *self,
 }
 
 static void
-peek_preferences_set_property (GObject      *object,
-                               guint         prop_id,
-                               const GValue *value,
-                               GParamSpec   *pspec)
+bind_check_buttons (PeekPreferences *self)
 {
-  PeekPreferences *prefs = PEEK_PREFERENCES (object);
+  g_settings_bind (self->settings, "show-name",
+                   self->name_check_button, "active",
+                   G_SETTINGS_BIND_DEFAULT);
 
-  switch (prop_id)
-  {
-    case PROP_TREE_VIEW:
-      prefs->tree_view = g_value_get_object (value);
-      break;
-    default:
-      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-      break;
-  }
-}
+  g_settings_bind (self->settings, "show-user",
+                   self->user_check_button, "active",
+                   G_SETTINGS_BIND_DEFAULT);
 
-static void
-peek_preferences_get_property (GObject      *object,
-                               guint         prop_id,
-                               GValue       *value,
-                               GParamSpec   *pspec)
-{
-  PeekPreferences *prefs = PEEK_PREFERENCES (object);
+  g_settings_bind (self->settings, "show-memory",
+                   self->memory_check_button, "active",
+                   G_SETTINGS_BIND_DEFAULT);
 
-  switch (prop_id)
-  {
-    case PROP_TREE_VIEW:
-      g_value_set_object (value, prefs->tree_view);
-      break;
-    default:
-      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-      break;
-  }
-}
+  g_settings_bind (self->settings, "show-cpu",
+                   self->cpu_check_button, "active",
+                   G_SETTINGS_BIND_DEFAULT);
 
-static void
-peek_preferences_constructed (GObject *object)
-{
-  PeekPreferences *prefs = PEEK_PREFERENCES (object);
-  GtkTreeViewColumn *column;
+  g_settings_bind (self->settings, "show-cpu-time",
+                   self->cpu_time_check_button, "active",
+                   G_SETTINGS_BIND_DEFAULT);
 
-  for (gint i = 0; i < NUM_COLUMNS; i++)
-  {
-    column = gtk_tree_view_get_column (GTK_TREE_VIEW (prefs->tree_view), i);
+  g_settings_bind (self->settings, "show-ppid",
+                   self->ppid_check_button, "active",
+                   G_SETTINGS_BIND_DEFAULT);
 
-    if (column)
-    {
-      switch (i)
-      {
-        case COLUMN_NAME:
-          g_object_bind_property (prefs->name_check_button, "active",
-                                  column, "visible",
-                                  G_BINDING_DEFAULT);
-          break;
-        case COLUMN_USER:
-          g_object_bind_property (prefs->user_check_button, "active",
-                                  column, "visible",
-                                  G_BINDING_DEFAULT);
-          break;
-        case COLUMN_MEMORY:
-          g_object_bind_property (prefs->memory_check_button, "active",
-                                  column, "visible",
-                                  G_BINDING_DEFAULT);
-          break;
-        case COLUMN_CPU_P:
-          g_object_bind_property (prefs->cpu_check_button, "active",
-                                  column, "visible",
-                                  G_BINDING_DEFAULT);
-          break;
-        case COLUMN_CPU_TIME:
-          g_object_bind_property (prefs->cpu_time_check_button, "active",
-                                  column, "visible",
-                                  G_BINDING_DEFAULT);
-          break;
-        case COLUMN_PPID:
-          g_object_bind_property (prefs->ppid_check_button, "active",
-                                  column, "visible",
-                                  G_BINDING_DEFAULT);
-          break;
-        case COLUMN_STATE:
-          g_object_bind_property (prefs->state_check_button, "active",
-                                  column, "visible",
-                                  G_BINDING_DEFAULT);
-          break;
-        case COLUMN_NICE:
-          g_object_bind_property (prefs->nice_check_button, "active",
-                                  column, "visible",
-                                  G_BINDING_DEFAULT);
-          break;
-        case COLUMN_PRIORITY:
-          g_object_bind_property (prefs->priority_check_button, "active",
-                                  column, "visible",
-                                  G_BINDING_DEFAULT);
-          break;
-        default:
-          break;
-      }
-    }
-  }
-  G_OBJECT_CLASS (peek_preferences_parent_class)->constructed (object);
+  g_settings_bind (self->settings, "show-state",
+                   self->state_check_button, "active",
+                   G_SETTINGS_BIND_DEFAULT);
+
+  g_settings_bind (self->settings, "show-nice",
+                   self->nice_check_button, "active",
+                   G_SETTINGS_BIND_DEFAULT);
+
+  g_settings_bind (self->settings, "show-priority",
+                   self->priority_check_button, "active",
+                   G_SETTINGS_BIND_DEFAULT);
 }
 
 static void
 peek_preferences_finalize (GObject *object)
 {
+  PeekPreferences *self = PEEK_PREFERENCES (object);
+
+  g_clear_object (&self->settings);
+
   G_OBJECT_CLASS (peek_preferences_parent_class)->finalize (object);
 }
 
@@ -156,6 +90,10 @@ static void
 peek_preferences_init (PeekPreferences *self)
 {
   gtk_widget_init_template (GTK_WIDGET (self));
+
+  self->settings = g_settings_new ("com.github.reyncode.peek");
+
+  bind_check_buttons (self);
 
   PeekApplication *app;
   guint interval;
@@ -216,29 +154,13 @@ peek_preferences_class_init (PeekPreferencesClass *klass)
   gtk_widget_class_bind_template_callback (GTK_WIDGET_CLASS (klass),
                                            interval_value_changed);
   
-  G_OBJECT_CLASS (klass)->set_property = peek_preferences_set_property;
-  G_OBJECT_CLASS (klass)->get_property = peek_preferences_get_property;
-
-  preferences_props[PROP_TREE_VIEW] = g_param_spec_object ("tree-view",
-                                                           "TreeView",
-                                                           "The tree view holding the proc data rows.",
-                                                           GTK_TYPE_WIDGET,
-                                                           G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE);
-
-  g_object_class_install_properties (G_OBJECT_CLASS (klass),
-                                     N_PROPERTIES,
-                                     preferences_props);
-
-  G_OBJECT_CLASS (klass)->constructed = peek_preferences_constructed;
   G_OBJECT_CLASS (klass)->finalize = peek_preferences_finalize;
 }
 
 PeekPreferences *
-peek_preferences_new (PeekWindow *window,
-                      GtkWidget  *tree_view)
+peek_preferences_new (PeekWindow *window)
 {
   return g_object_new (PEEK_TYPE_PREFERENCES,
                        "transient-for", window,
-                       "tree-view", tree_view,
                        NULL);
 }
