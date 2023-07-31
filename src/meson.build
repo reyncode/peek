@@ -9,8 +9,18 @@ sources = [
   'peek-process.c', 'peek-process.h',
 ]
 
+resources = gnome.compile_resources(
+  'resources',
+  join_paths(data_dir, 'peek.gresource.xml'),
+  source_dir: [
+    data_dir,
+  ],
+  c_name: 'resources'
+)
+
 executable(
   meson.project_name(),
   sources: sources + resources,
   dependencies: deps,
+  install: true,
 )

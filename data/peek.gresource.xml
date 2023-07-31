@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gresources>
+  <gresource prefix="/com/github/reyncode/peek/data">
+    <file preprocess="xml-stripblanks">org.gnome.Adwaita1.Demo.svg</file>
+    <file preprocess="xml-stripblanks">ui/tree-view.ui</file>
+    <file preprocess="xml-stripblanks">ui/process-view.ui</file>
+    <file preprocess="xml-stripblanks">ui/window.ui</file>
+    <file preprocess="xml-stripblanks">ui/preferences.ui</file>
+    <file preprocess="xml-stripblanks">ui/header-menu.ui</file>
+    <file preprocess="xml-stripblanks">icons/scalable/apps/org.gnome.Boxes.svg</file>
+  </gresource>
+</gresources>

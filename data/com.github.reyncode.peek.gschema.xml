@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+  <schema path="/com/github/reyncode/peek/" id="com.github.reyncode.peek">
+    <key name="interval" type="i">
+      <default>2</default>
+      <summary>Refresh Interval</summary>
+      <description>Control the interval at which the tables are updated with new data</description>
+    </key>
+    <key name="show-name" type="b">
+      <default>true</default>
+      <summary>Show Process Name</summary>
+      <description>Whether to show the process name in the table</description>
+    </key>
+  </schema>
+</schemalist>

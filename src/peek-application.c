@@ -17,6 +17,8 @@ static guint proc_interval_signal;
 struct _PeekApplication {
   AdwApplication parent;
 
+  GSettings    *settings;
+
   guint         timeout_id;
   guint         interval;
 
@@ -56,6 +58,8 @@ peek_application_finalize (GObject *object)
 
   if (app->proc_table)
     g_hash_table_destroy (app->proc_table);
+
+  g_clear_object (&app->settings);
 }
 
 static void
@@ -112,7 +116,9 @@ get_system_core_count ()
 static void
 peek_application_init (PeekApplication *self)
 {
-  self->interval = 2; // integrate with GSetting
+  
+  self->settings = g_settings_new ("com.github.reyncode.peek");
+  self->interval = g_settings_get_int (self->settings, "interval");
 
   self->model = peek_tree_model_new (self);
   
@@ -252,6 +258,8 @@ peek_application_set_interval (PeekApplication *self,
   g_return_if_fail (PEEK_IS_APPLICATION (self));
 
   self->interval = value;
+
+  g_settings_set_int (self->settings, "interval", self->interval);
 
   g_signal_emit_by_name (self, "interval-update");
 }
