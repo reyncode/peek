@@ -48,12 +48,8 @@ proc_data_update (ProcData        *proc_data,
   else
     proc_data->state = pstate.state;
 
-  // TODO - bug / somewhere making the % exceed 100% at times
-  // cpu %
+  // cpu - %
   guint cpu_scale = 100;
-  guint cores = peek_application_get_core_count (app);
-
-  cpu_scale *= cores;
 
   guint64 cpu_time_total = peek_application_get_cpu_time_total (app);
 
@@ -117,7 +113,7 @@ update_cpu_timing_values (PeekApplication *app)
 
   glibtop_get_cpu (&cpu);
   cpu_time_total_last = peek_application_get_cpu_time_total_last (app);
-
+  
   cpu_time_total = MAX (cpu.total - cpu_time_total_last, 1);
   cpu_time_total_last = cpu.total;
 

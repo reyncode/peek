@@ -26,7 +26,6 @@ struct _PeekApplication {
   GHashTable   *proc_table;
   GtkWidget    *search_entry;
 
-  guint         cores;
   guint64       cpu_time_total;
   guint64       cpu_time_total_last;
   guint64       cpu_frequency;
@@ -101,18 +100,6 @@ restart_timeout_cb (gpointer data)
   self->timeout_id = g_timeout_add_seconds (self->interval, peek_process_updater, self);
 }
 
-static guint
-get_system_core_count ()
-{
-  const glibtop_sysinfo *info;
-
-  info = glibtop_get_sysinfo ();
-
-  g_assert (info != NULL);
-
-  return info->ncpu;
-}
-
 static void
 peek_application_init (PeekApplication *self)
 {
@@ -128,8 +115,6 @@ peek_application_init (PeekApplication *self)
                                             proc_table_value_destroy);
 
   self->search_entry = NULL;
-
-  self->cores = get_system_core_count ();
 
   self->cpu_time_total = 0;
   self->cpu_time_total_last = 0;
@@ -182,14 +167,6 @@ peek_application_get_proc_table (PeekApplication *self)
   g_return_val_if_fail (PEEK_IS_APPLICATION (self), NULL);
 
   return self->proc_table;
-}
-
-guint
-peek_application_get_core_count (PeekApplication *self)
-{
-  g_return_val_if_fail (PEEK_IS_APPLICATION (self), 0);
-
-  return self->cores;
 }
 
 guint64

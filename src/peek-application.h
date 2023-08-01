@@ -15,8 +15,6 @@ GHashTable *peek_application_get_proc_table (PeekApplication *self);
 
 GtkWidget *peek_application_get_search_entry (PeekApplication *self);
 
-guint peek_application_get_core_count (PeekApplication *self);
-
 guint64 peek_application_get_cpu_time_total (PeekApplication *self);
 
 void peek_application_set_cpu_time_total (PeekApplication *self, guint64 value);
