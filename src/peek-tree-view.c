@@ -6,6 +6,8 @@
 
 #define TREE_VIEW_RESOURCE_PATH "/com/github/reyncode/peek/data/ui/tree-view.ui"
 
+// TODOS fix the expanding spacing issue with columns
+
 struct _PeekTreeView {
   GtkBox  parent;
 

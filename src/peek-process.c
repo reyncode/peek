@@ -6,6 +6,7 @@
 #include <glibtop.h>
 #include <glibtop/proclist.h>
 #include <glibtop/procstate.h>
+#include <glibtop/procargs.h>
 #include <glibtop/proctime.h>
 #include <glibtop/procuid.h>
 #include <glibtop/procmem.h>
@@ -66,14 +67,35 @@ proc_data_update (ProcData        *proc_data,
   proc_data->memory = pmem.resident - pmem.share;
 }
 
+static gchar *
+parse_name_from_cmd_args (const gchar *cmd,
+                          const GStrv  args)
+{
+  if (args)
+  {
+    for (int i = 0; i != 2 && args[i]; ++i)
+    {
+      gchar *basename = g_path_get_basename (args[i]);
+
+      if (g_str_has_prefix (basename, cmd))
+        return basename;
+
+      g_clear_pointer (&basename, g_free);
+    }
+  }
+  return g_strdup (cmd);
+}
+
 static ProcData *
 proc_data_new (pid_t pid)
 {
   ProcData *proc_data; 
   glibtop_proc_state pstate;
+  glibtop_proc_args pargs;
   glibtop_proc_uid puid;
   glibtop_proc_mem pmem;
   glibtop_proc_time ptime;
+  gchar **args;
 
   proc_data = g_malloc0 (sizeof (ProcData));
   
@@ -83,7 +105,9 @@ proc_data_new (pid_t pid)
   glibtop_get_proc_uid (&puid, pid);
   glibtop_get_proc_mem (&pmem, pid);
   glibtop_get_proc_time (&ptime, pid);
+  args = glibtop_get_proc_argv (&pargs, pid, 0);
 
+  proc_data->name = parse_name_from_cmd_args (pstate.cmd, (const GStrv) args);
   proc_data->pid = pid;
 
   proc_data->ppid = puid.ppid;
@@ -93,13 +117,14 @@ proc_data_new (pid_t pid)
   proc_data->cpu_time = ptime.rtime;
   proc_data->cpu_usage = 0;
 
-  proc_data->name = g_strdup (pstate.cmd);
   proc_data->state = pstate.state;
 
   proc_data->memory_vsize = pmem.vsize;
   proc_data->memory_shared = pmem.share;
   proc_data->memory_resident = pmem.resident;
   proc_data->memory = pmem.resident - pmem.share;
+
+  g_strfreev (args);
 
   return proc_data;
 }

@@ -40,22 +40,6 @@ peek_window_get_search_entry (PeekWindow *window)
   return window->search_entry;
 }
 
-// static gboolean
-// on_key_press_event (GtkWidget *widget,
-//                     GdkEvent  *event,
-//                     gpointer   data)
-// {
-//   PeekWindow *window = PEEK_WINDOW (data);
-
-//   // do something with the key
-//   // if (event->key.keyval == GDK_KEY_Escape)
-
-//   if (!gtk_widget_is_focus (window->search_entry))
-//     gtk_entry_grab_focus_without_selecting (GTK_ENTRY (window->search_entry));
-
-//   return gtk_search_entry_handle_event (GTK_SEARCH_ENTRY (window->search_entry), event);
-// }
-
 static void
 search_entry_changed (GtkEditable *self,
                       gpointer     data)
@@ -151,10 +135,6 @@ peek_window_class_init (PeekWindowClass *klass)
   gtk_widget_class_bind_template_child (GTK_WIDGET_CLASS (klass),
                                         PeekWindow,
                                         peek_tree_view);
-
-  // callbacks
-  // gtk_widget_class_bind_template_callback (GTK_WIDGET_CLASS (klass),
-  //                                          on_key_press_event);
 
   gtk_widget_class_bind_template_callback (GTK_WIDGET_CLASS (klass),
                                            search_entry_changed);
