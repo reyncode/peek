@@ -26,9 +26,14 @@ static void preferences_activated (GSimpleAction *action,
                                    GVariant      *parameter,
                                    gpointer       data);
 
+static void about_activated (GSimpleAction *action,
+                             GVariant      *parameter,
+                             gpointer       data);
+
 static GActionEntry win_entries [] = 
 {
   { "preferences", preferences_activated, NULL, NULL, NULL },
+  { "about", about_activated, NULL, NULL, NULL },
 };
 
 
@@ -64,6 +69,14 @@ preferences_activated (GSimpleAction *action,
   preferences = peek_preferences_new (window);
 
   gtk_window_present (GTK_WINDOW (preferences));
+}
+
+static void
+about_activated (GSimpleAction *action,
+                 GVariant      *parameter,
+                 gpointer       data)
+{
+
 }
 
 static void

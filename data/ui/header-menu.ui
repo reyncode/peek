@@ -6,6 +6,10 @@
         <attribute name="label" translatable="yes">_Preferences</attribute>
         <attribute name="action">win.preferences</attribute>
       </item>
+      <item>
+        <attribute name="label" translatable="yes">_About Peek</attribute>
+        <attribute name="action">win.about</attribute>
+      </item>
     </section>
   </menu>
 </interface>
