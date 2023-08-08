@@ -6,8 +6,6 @@
 
 #define TREE_VIEW_RESOURCE_PATH "/com/github/reyncode/peek/data/ui/tree-view.ui"
 
-// TODOS fix the expanding spacing issue with columns
-
 struct _PeekTreeView {
   GtkBox  parent;
 
@@ -242,8 +240,16 @@ peek_tree_view_create_columns (PeekTreeView *self)
                                                      NULL);
   gtk_tree_view_column_set_sort_column_id (column, COLUMN_NAME);
   gtk_tree_view_column_set_reorderable (column, TRUE);
-  gtk_tree_view_column_set_expand (column, TRUE);
+
+
+  gtk_tree_view_column_set_resizable (column, TRUE);
+  gtk_tree_view_column_set_sizing (column, GTK_TREE_VIEW_COLUMN_FIXED);
+  gtk_tree_view_column_set_min_width (column, 1);
+
   gtk_tree_view_append_column (tree_view, column);
+
+  gtk_tree_view_set_expander_column (tree_view, column);
+  gtk_tree_view_column_set_expand (column, TRUE);
 
   g_settings_bind (self->settings, "show-name",
                    column, "visible",
@@ -257,7 +263,6 @@ peek_tree_view_create_columns (PeekTreeView *self)
                                                      NULL);
   gtk_tree_view_column_set_sort_column_id (column, COLUMN_ID);
   gtk_tree_view_column_set_reorderable (column, TRUE);
-  gtk_tree_view_column_set_expand (column, TRUE);
   gtk_tree_view_append_column (tree_view, column);
 
   // User
@@ -268,7 +273,6 @@ peek_tree_view_create_columns (PeekTreeView *self)
                                                      NULL);
   gtk_tree_view_column_set_sort_column_id (column, COLUMN_USER);
   gtk_tree_view_column_set_reorderable (column, TRUE);
-  gtk_tree_view_column_set_expand (column, TRUE);
   gtk_tree_view_append_column (tree_view, column);
 
   g_settings_bind (self->settings, "show-user",
@@ -290,7 +294,6 @@ peek_tree_view_create_columns (PeekTreeView *self)
   g_object_set (G_OBJECT (renderer), "xalign", 1.0f, NULL); // right alignment
   gtk_tree_view_column_set_sort_column_id (column, COLUMN_MEMORY);
   gtk_tree_view_column_set_reorderable (column, TRUE);
-  gtk_tree_view_column_set_expand (column, TRUE);
   gtk_tree_view_append_column (tree_view, column);
 
   g_settings_bind (self->settings, "show-memory",
@@ -312,7 +315,6 @@ peek_tree_view_create_columns (PeekTreeView *self)
   g_object_set (G_OBJECT (renderer), "xalign", 1.0f, NULL); // right alignment
   gtk_tree_view_column_set_sort_column_id (column, COLUMN_CPU_P);
   gtk_tree_view_column_set_reorderable (column, TRUE);
-  gtk_tree_view_column_set_expand (column, TRUE);
   gtk_tree_view_append_column (tree_view, column);
 
   g_settings_bind (self->settings, "show-cpu",
@@ -334,7 +336,6 @@ peek_tree_view_create_columns (PeekTreeView *self)
   g_object_set (G_OBJECT (renderer), "xalign", 1.0f, NULL); // right alignment
   gtk_tree_view_column_set_sort_column_id (column, COLUMN_CPU_TIME);
   gtk_tree_view_column_set_reorderable (column, TRUE);
-  gtk_tree_view_column_set_expand (column, TRUE);
   gtk_tree_view_append_column (tree_view, column);
 
   g_settings_bind (self->settings, "show-cpu-time",
@@ -349,7 +350,6 @@ peek_tree_view_create_columns (PeekTreeView *self)
                                                      NULL);
   gtk_tree_view_column_set_sort_column_id (column, COLUMN_PPID);
   gtk_tree_view_column_set_reorderable (column, TRUE);
-  gtk_tree_view_column_set_expand (column, TRUE);
   gtk_tree_view_append_column (tree_view, column);
 
   g_settings_bind (self->settings, "show-ppid",
@@ -365,7 +365,6 @@ peek_tree_view_create_columns (PeekTreeView *self)
                                                     
   gtk_tree_view_column_set_sort_column_id (column, COLUMN_STATE);
   gtk_tree_view_column_set_reorderable (column, TRUE);
-  gtk_tree_view_column_set_expand (column, TRUE);
   gtk_tree_view_append_column (tree_view, column);
 
   g_settings_bind (self->settings, "show-state",
@@ -381,7 +380,6 @@ peek_tree_view_create_columns (PeekTreeView *self)
                                                     
   gtk_tree_view_column_set_sort_column_id (column, COLUMN_NICE);
   gtk_tree_view_column_set_reorderable (column, TRUE);
-  gtk_tree_view_column_set_expand (column, TRUE);
   gtk_tree_view_append_column (tree_view, column);
 
   g_settings_bind (self->settings, "show-nice",
@@ -406,7 +404,6 @@ peek_tree_view_create_columns (PeekTreeView *self)
 
   gtk_tree_view_column_set_sort_column_id (column, COLUMN_PRIORITY);
   gtk_tree_view_column_set_reorderable (column, TRUE);
-  gtk_tree_view_column_set_expand (column, TRUE);
   gtk_tree_view_append_column (tree_view, column);
 
   g_settings_bind (self->settings, "show-priority",
