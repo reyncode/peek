@@ -30,7 +30,7 @@ filter_for_query (GtkTreeModel *model,
                        G_REGEX_MATCH_PARTIAL,
                        &error);
 
-  if (error) // TODO better debugging
+  if (error)
     g_print ("Error: %s\n", error->message);
 
   found = (name && g_regex_match (regex, name, G_REGEX_MATCH_PARTIAL, NULL)) ||

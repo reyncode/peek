@@ -1,3 +1,5 @@
+#include <adwaita.h>
+
 #include "peek-preferences.h"
 #include "peek-tree-view.h"
 #include "peek-tree-model.h"

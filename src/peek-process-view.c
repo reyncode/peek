@@ -1,3 +1,5 @@
+#include <adwaita.h>
+
 #include "peek-process-view.h"
 #include "peek-application.h"
 #include "peek-tree-model.h"
@@ -52,6 +54,7 @@ proc_update_cb (PeekApplication *app,
 
     gtk_label_set_label (GTK_LABEL (view->status_label), "Dead");
 
+    // stop updating the dead process
     g_signal_handlers_disconnect_by_func (app,
                                           proc_update_cb,
                                           view);

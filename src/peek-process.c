@@ -288,8 +288,6 @@ update_proc_list (PeekApplication *app,
   GList *keys = g_hash_table_get_keys (proc_table);
   GList *tmp = g_list_first (keys);
 
-  // some sort algo for keys
-
   while (tmp->next != NULL)
   {
     pid_t key = *(pid_t *) tmp->data;
@@ -298,7 +296,6 @@ update_proc_list (PeekApplication *app,
     {
       ProcData *proc_data = g_hash_table_lookup (proc_table, &key);
 
-      // tree removal
       gtk_list_store_remove (GTK_LIST_STORE (child), &proc_data->iter);
 
       g_hash_table_remove (proc_table, &key);

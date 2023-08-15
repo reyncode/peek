@@ -1,3 +1,5 @@
+#include <adwaita.h>
+
 #include "peek-tree-view.h"
 #include "peek-application.h"
 #include "peek-tree-model.h"
@@ -291,7 +293,7 @@ peek_tree_view_create_columns (PeekTreeView *self)
                                            GUINT_TO_POINTER (COLUMN_MEMORY),
                                            NULL);
 
-  g_object_set (G_OBJECT (renderer), "xalign", 1.0f, NULL); // right alignment
+  g_object_set (G_OBJECT (renderer), "xalign", 1.0f, NULL);
   gtk_tree_view_column_set_sort_column_id (column, COLUMN_MEMORY);
   gtk_tree_view_column_set_reorderable (column, TRUE);
   gtk_tree_view_append_column (tree_view, column);
@@ -312,7 +314,7 @@ peek_tree_view_create_columns (PeekTreeView *self)
                                            GUINT_TO_POINTER (COLUMN_CPU_P),
                                            NULL);
 
-  g_object_set (G_OBJECT (renderer), "xalign", 1.0f, NULL); // right alignment
+  g_object_set (G_OBJECT (renderer), "xalign", 1.0f, NULL);
   gtk_tree_view_column_set_sort_column_id (column, COLUMN_CPU_P);
   gtk_tree_view_column_set_reorderable (column, TRUE);
   gtk_tree_view_append_column (tree_view, column);
@@ -333,7 +335,7 @@ peek_tree_view_create_columns (PeekTreeView *self)
                                            GUINT_TO_POINTER (COLUMN_CPU_TIME),
                                            NULL);
 
-  g_object_set (G_OBJECT (renderer), "xalign", 1.0f, NULL); // right alignment
+  g_object_set (G_OBJECT (renderer), "xalign", 1.0f, NULL);
   gtk_tree_view_column_set_sort_column_id (column, COLUMN_CPU_TIME);
   gtk_tree_view_column_set_reorderable (column, TRUE);
   gtk_tree_view_append_column (tree_view, column);
@@ -419,14 +421,6 @@ peek_tree_view_set_search_entry (PeekTreeView *peek_tree_view,
                                   editable);
 }
 
-// marked for removal
-static void
-peek_tree_view_selection_changed (GtkTreeSelection *selection,
-                                  gpointer          data)
-{
-
-}
-
 static void
 process_inspector (GtkTreeView       *self,
                    GtkTreePath       *path,
@@ -497,9 +491,6 @@ peek_tree_view_class_init (PeekTreeViewClass *klass)
   gtk_widget_class_bind_template_child (GTK_WIDGET_CLASS (klass),
                                         PeekTreeView,
                                         tree_view);
-  
-  gtk_widget_class_bind_template_callback (GTK_WIDGET_CLASS (klass),
-                                           peek_tree_view_selection_changed);
 }
 
 PeekTreeView *

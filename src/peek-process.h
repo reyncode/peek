@@ -1,4 +1,5 @@
-#pragma once
+#ifndef PEEK_PROCESS_H
+#define PEEK_PROCESS_H
 
 #include "gtk/gtk.h"
 #include "glib-object.h"
@@ -30,3 +31,5 @@ gboolean peek_process_updater (gpointer data);
 
 const gchar *parse_user_from_uid (guint32 uid);
 const gchar *parse_proc_state (guint state);
+
+#endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef PEEK_TREE_MODEL_H
+#define PEEK_TREE_MODEL_H
 
 #include <gtk/gtk.h>
 
@@ -19,3 +20,5 @@ enum {
 };
 
 GtkTreeModel *peek_tree_model_new (PeekApplication *app);
+
+#endif

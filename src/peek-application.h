@@ -1,4 +1,5 @@
-#pragma once
+#ifndef PEEK_APPLICATION_H
+#define PEEK_APPLICATION_H
 
 #include <adwaita.h>
 
@@ -34,3 +35,5 @@ guint peek_application_get_interval (PeekApplication *self);
 PeekApplication *peek_application_new (void);
 
 G_END_DECLS
+
+#endif

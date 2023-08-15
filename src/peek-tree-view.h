@@ -1,4 +1,5 @@
-#pragma once
+#ifndef PEEK_TREE_VIEW_H
+#define PEEK_TREE_VIEW_H
 
 #include <adwaita.h>
 
@@ -17,3 +18,5 @@ const gchar *parse_priority_from_nice (gint nice);
 gchar *parse_duration_centiseconds (guint centiseconds);
 
 G_END_DECLS
+
+#endif

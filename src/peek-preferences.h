@@ -1,4 +1,5 @@
-#pragma once
+#ifndef PEEK_PREFERENCES_H
+#define PEEK_PREFERENCES_H
 
 #include <adwaita.h>
 
@@ -13,3 +14,5 @@ G_DECLARE_FINAL_TYPE (PeekPreferences, peek_preferences, PEEK, PREFERENCES, AdwP
 PeekPreferences *peek_preferences_new (PeekWindow *window);
 
 G_END_DECLS
+
+#endif

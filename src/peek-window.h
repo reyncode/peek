@@ -1,4 +1,5 @@
-#pragma once
+#ifndef PEEK_WINDOW_H
+#define PEEK_WINDOW_H
 
 #include <adwaita.h>
 
@@ -14,3 +15,5 @@ PeekWindow *peek_window_new (PeekApplication *app);
 GtkWidget *peek_window_get_search_entry (PeekWindow *window);
 
 G_END_DECLS
+
+#endif

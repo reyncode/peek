@@ -244,10 +244,6 @@ peek_application_set_interval (PeekApplication *self,
 GtkWidget *
 peek_application_get_search_entry (PeekApplication *self)
 {
-  // to speed up filtering and refiltering a search over the tree model,
-  // we are providing a reference directly to application so that we
-  // can speed up entry text retrieval in the filter func
-
   g_return_val_if_fail (PEEK_IS_APPLICATION (self), NULL);
 
   return self->search_entry;
