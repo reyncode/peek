@@ -11,7 +11,7 @@ sources = [
 
 resources = gnome.compile_resources(
   'resources',
-  join_paths(data_dir, 'peek.gresource.xml'),
+  join_paths(data_dir, 'com.github.reyncode.peek.gresource.xml'),
   source_dir: [
     data_dir,
   ],
