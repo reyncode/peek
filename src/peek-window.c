@@ -76,7 +76,23 @@ about_activated (GSimpleAction *action,
                  GVariant      *parameter,
                  gpointer       data)
 {
+  const char *devs[] = {
+    "Alex Reynolds",
+    NULL
+  };
 
+  PeekApplication *app;
+  
+  app = peek_application_get_instance ();
+
+  adw_show_about_window (gtk_application_get_active_window (GTK_APPLICATION (app)),
+                         "application-name", "Peek",
+                         "application-icon", "org.gnome.Adwaita1.Demo",
+                         "version", "1.0.0",
+                         "issue-url", "https://github.com/reyncode/peek/issues",
+                         "license-type", GTK_LICENSE_GPL_3_0,
+                         "developers", devs,
+                         NULL);
 }
 
 static void

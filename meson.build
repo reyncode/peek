@@ -11,7 +11,7 @@ bindir = join_paths(prefix, get_option('bindir'))
 datadir = join_paths(prefix, get_option('datadir'))
 schemadir = join_paths(datadir, 'glib-2.0', 'schemas')
 
-adwaita = dependency('libadwaita-1', version: '>= 1.0.0')
+adwaita = dependency('libadwaita-1', version: '>= 1.2.0')
 libgtop = dependency('libgtop-2.0')
 
 deps = [
