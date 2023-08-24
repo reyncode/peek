@@ -11,8 +11,6 @@
 struct _PeekTreeView {
   GtkBox  parent;
 
-  GSettings *settings;
-
   GtkWidget *tree_view;
 };
 
@@ -227,11 +225,15 @@ duration_cell_data_func (GtkTreeViewColumn *column,
 static void
 peek_tree_view_create_columns (PeekTreeView *self)
 {  
+  PeekApplication   *app;
+  GSettings         *settings;
   GtkTreeView       *tree_view = GTK_TREE_VIEW (self->tree_view);
   GtkTreeModel      *model;
   GtkCellRenderer   *renderer;
   GtkTreeViewColumn *column;
 
+  app = peek_application_get_instance ();
+  settings = peek_application_get_settings (app);
   model = gtk_tree_view_get_model (tree_view);
 
   // Process Name
@@ -253,7 +255,7 @@ peek_tree_view_create_columns (PeekTreeView *self)
   gtk_tree_view_set_expander_column (tree_view, column);
   gtk_tree_view_column_set_expand (column, TRUE);
 
-  g_settings_bind (self->settings, "show-name",
+  g_settings_bind (settings, "show-name",
                    column, "visible",
                    G_SETTINGS_BIND_DEFAULT);
 
@@ -277,7 +279,7 @@ peek_tree_view_create_columns (PeekTreeView *self)
   gtk_tree_view_column_set_reorderable (column, TRUE);
   gtk_tree_view_append_column (tree_view, column);
 
-  g_settings_bind (self->settings, "show-user",
+  g_settings_bind (settings, "show-user",
                    column, "visible",
                    G_SETTINGS_BIND_DEFAULT);
 
@@ -298,7 +300,7 @@ peek_tree_view_create_columns (PeekTreeView *self)
   gtk_tree_view_column_set_reorderable (column, TRUE);
   gtk_tree_view_append_column (tree_view, column);
 
-  g_settings_bind (self->settings, "show-memory",
+  g_settings_bind (settings, "show-memory",
                    column, "visible",
                    G_SETTINGS_BIND_DEFAULT);
   
@@ -319,7 +321,7 @@ peek_tree_view_create_columns (PeekTreeView *self)
   gtk_tree_view_column_set_reorderable (column, TRUE);
   gtk_tree_view_append_column (tree_view, column);
 
-  g_settings_bind (self->settings, "show-cpu",
+  g_settings_bind (settings, "show-cpu",
                    column, "visible",
                    G_SETTINGS_BIND_DEFAULT);
 
@@ -340,7 +342,7 @@ peek_tree_view_create_columns (PeekTreeView *self)
   gtk_tree_view_column_set_reorderable (column, TRUE);
   gtk_tree_view_append_column (tree_view, column);
 
-  g_settings_bind (self->settings, "show-cpu-time",
+  g_settings_bind (settings, "show-cpu-time",
                    column, "visible",
                    G_SETTINGS_BIND_DEFAULT);
 
@@ -354,7 +356,7 @@ peek_tree_view_create_columns (PeekTreeView *self)
   gtk_tree_view_column_set_reorderable (column, TRUE);
   gtk_tree_view_append_column (tree_view, column);
 
-  g_settings_bind (self->settings, "show-ppid",
+  g_settings_bind (settings, "show-ppid",
                    column, "visible",
                    G_SETTINGS_BIND_DEFAULT);
 
@@ -369,7 +371,7 @@ peek_tree_view_create_columns (PeekTreeView *self)
   gtk_tree_view_column_set_reorderable (column, TRUE);
   gtk_tree_view_append_column (tree_view, column);
 
-  g_settings_bind (self->settings, "show-state",
+  g_settings_bind (settings, "show-state",
                    column, "visible",
                    G_SETTINGS_BIND_DEFAULT);
 
@@ -384,7 +386,7 @@ peek_tree_view_create_columns (PeekTreeView *self)
   gtk_tree_view_column_set_reorderable (column, TRUE);
   gtk_tree_view_append_column (tree_view, column);
 
-  g_settings_bind (self->settings, "show-nice",
+  g_settings_bind (settings, "show-nice",
                    column, "visible",
                    G_SETTINGS_BIND_DEFAULT);
 
@@ -408,7 +410,7 @@ peek_tree_view_create_columns (PeekTreeView *self)
   gtk_tree_view_column_set_reorderable (column, TRUE);
   gtk_tree_view_append_column (tree_view, column);
 
-  g_settings_bind (self->settings, "show-priority",
+  g_settings_bind (settings, "show-priority",
                    column, "visible",
                    G_SETTINGS_BIND_DEFAULT);
 }
@@ -448,10 +450,6 @@ process_inspector (GtkTreeView       *self,
 static void
 peek_tree_view_finalize (GObject *object)
 {
-  PeekTreeView *self = PEEK_TREE_VIEW (object);
-
-  g_clear_object (&self->settings);
-
   G_OBJECT_CLASS (peek_tree_view_parent_class)->finalize (object);
 }
 
@@ -461,8 +459,6 @@ peek_tree_view_init (PeekTreeView *self)
   g_type_ensure (PEEK_TYPE_PROCESS_VIEW);
 
   gtk_widget_init_template (GTK_WIDGET (self));
-
-  self->settings = g_settings_new ("com.github.reyncode.peek");
 
   PeekApplication *application;
   application = peek_application_get_instance ();

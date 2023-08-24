@@ -32,6 +32,8 @@ void peek_application_set_interval (PeekApplication *self, guint value);
 
 guint peek_application_get_interval (PeekApplication *self);
 
+GSettings *peek_application_get_settings (PeekApplication *self);
+
 PeekApplication *peek_application_new (void);
 
 G_END_DECLS

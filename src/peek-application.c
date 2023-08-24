@@ -104,7 +104,7 @@ static void
 peek_application_init (PeekApplication *self)
 {
   
-  self->settings = g_settings_new ("com.github.reyncode.peek");
+  self->settings = g_settings_new (APPLICATION_ID);
   self->interval = g_settings_get_int (self->settings, "interval");
 
   self->model = peek_tree_model_new (self);
@@ -241,6 +241,14 @@ peek_application_set_interval (PeekApplication *self,
   g_signal_emit_by_name (self, "interval-update");
 }
 
+GSettings *
+peek_application_get_settings (PeekApplication *self)
+{
+  g_return_val_if_fail (PEEK_IS_APPLICATION (self), NULL);
+
+  return self->settings;
+}
+
 GtkWidget *
 peek_application_get_search_entry (PeekApplication *self)
 {
@@ -257,7 +265,7 @@ peek_application_get_instance (void)
   if (!app)
     app = g_object_new (PEEK_TYPE_APPLICATION,
                         "application-id", APPLICATION_ID,
-                        "flags", G_APPLICATION_FLAGS_NONE,
+                        "flags", G_APPLICATION_DEFAULT_FLAGS,
                         NULL);
 
   return app;

@@ -3,13 +3,12 @@
 #include "peek-preferences.h"
 #include "peek-tree-view.h"
 #include "peek-tree-model.h"
+#include "peek-application.h"
 
 #define RESOURCE_PATH "/com/github/reyncode/peek/data/ui/preferences.ui"
 
 struct _PeekPreferences {
   AdwPreferencesWindow parent;
-
-  GSettings *settings;
 
   GtkWidget *tree_view;
 
@@ -41,39 +40,45 @@ interval_value_changed (GtkSpinButton *self,
 static void
 bind_check_buttons (PeekPreferences *self)
 {
-  g_settings_bind (self->settings, "show-name",
+  PeekApplication *app;
+  GSettings *settings;
+
+  app = peek_application_get_instance ();
+  settings = peek_application_get_settings (app);
+
+  g_settings_bind (settings, "show-name",
                    self->name_check_button, "active",
                    G_SETTINGS_BIND_DEFAULT);
 
-  g_settings_bind (self->settings, "show-user",
+  g_settings_bind (settings, "show-user",
                    self->user_check_button, "active",
                    G_SETTINGS_BIND_DEFAULT);
 
-  g_settings_bind (self->settings, "show-memory",
+  g_settings_bind (settings, "show-memory",
                    self->memory_check_button, "active",
                    G_SETTINGS_BIND_DEFAULT);
 
-  g_settings_bind (self->settings, "show-cpu",
+  g_settings_bind (settings, "show-cpu",
                    self->cpu_check_button, "active",
                    G_SETTINGS_BIND_DEFAULT);
 
-  g_settings_bind (self->settings, "show-cpu-time",
+  g_settings_bind (settings, "show-cpu-time",
                    self->cpu_time_check_button, "active",
                    G_SETTINGS_BIND_DEFAULT);
 
-  g_settings_bind (self->settings, "show-ppid",
+  g_settings_bind (settings, "show-ppid",
                    self->ppid_check_button, "active",
                    G_SETTINGS_BIND_DEFAULT);
 
-  g_settings_bind (self->settings, "show-state",
+  g_settings_bind (settings, "show-state",
                    self->state_check_button, "active",
                    G_SETTINGS_BIND_DEFAULT);
 
-  g_settings_bind (self->settings, "show-nice",
+  g_settings_bind (settings, "show-nice",
                    self->nice_check_button, "active",
                    G_SETTINGS_BIND_DEFAULT);
 
-  g_settings_bind (self->settings, "show-priority",
+  g_settings_bind (settings, "show-priority",
                    self->priority_check_button, "active",
                    G_SETTINGS_BIND_DEFAULT);
 }
@@ -81,10 +86,6 @@ bind_check_buttons (PeekPreferences *self)
 static void
 peek_preferences_finalize (GObject *object)
 {
-  PeekPreferences *self = PEEK_PREFERENCES (object);
-
-  g_clear_object (&self->settings);
-
   G_OBJECT_CLASS (peek_preferences_parent_class)->finalize (object);
 }
 
@@ -92,8 +93,6 @@ static void
 peek_preferences_init (PeekPreferences *self)
 {
   gtk_widget_init_template (GTK_WIDGET (self));
-
-  self->settings = g_settings_new ("com.github.reyncode.peek");
 
   bind_check_buttons (self);
 
