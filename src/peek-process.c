@@ -28,6 +28,7 @@ static void
 proc_data_update (ProcData        *proc_data,
                   PeekApplication *app)
 {
+  // handle all the dynamic attributes
   glibtop_proc_state pstate;
   glibtop_proc_uid puid;
   glibtop_proc_mem pmem;
@@ -89,42 +90,31 @@ parse_name_from_cmd_args (const gchar *cmd,
 static ProcData *
 proc_data_new (pid_t pid)
 {
+  // handle all the static attributes
   ProcData *proc_data; 
+  PeekApplication *app;
   glibtop_proc_state pstate;
   glibtop_proc_args pargs;
   glibtop_proc_uid puid;
-  glibtop_proc_mem pmem;
-  glibtop_proc_time ptime;
   gchar **args;
 
   proc_data = g_malloc0 (sizeof (ProcData));
   
   g_assert (proc_data != NULL);
 
+  app = peek_application_get_instance ();
+
   glibtop_get_proc_state (&pstate, pid);
   glibtop_get_proc_uid (&puid, pid);
-  glibtop_get_proc_mem (&pmem, pid);
-  glibtop_get_proc_time (&ptime, pid);
   args = glibtop_get_proc_argv (&pargs, pid, 0);
 
   proc_data->name = parse_name_from_cmd_args (pstate.cmd, (const GStrv) args);
   proc_data->pid = pid;
-
   proc_data->ppid = puid.ppid;
-  proc_data->uid = puid.uid;
-  proc_data->nice = puid.nice;
-
-  proc_data->cpu_time = ptime.rtime;
-  proc_data->cpu_usage = 0;
-
-  proc_data->state = pstate.state;
-
-  proc_data->memory_vsize = pmem.vsize;
-  proc_data->memory_shared = pmem.share;
-  proc_data->memory_resident = pmem.resident;
-  proc_data->memory = pmem.resident - pmem.share;
 
   g_strfreev (args);
+
+  proc_data_update (proc_data, app);
 
   return proc_data;
 }
@@ -189,7 +179,7 @@ parse_proc_state (guint state)
 const gchar *
 parse_user_from_uid (guint32 uid)
 {
-  const gchar *user;
+  const gchar *user = "";
   struct passwd *pwd;
 
   pwd = getpwuid (uid);
