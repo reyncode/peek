@@ -1,4 +1,7 @@
 # peek
+<p align="center">
+  <img src="data/screenshots/peek-tree.png" alt="A screenshot of the peek tree."/>
+</p>
 
 Peek is process monitoring application that allows linux users to inspect active processes on their system. It uses GNOME's [glib](https://github.com/GNOME/glib) and [glibtop](https://github.com/GNOME/libgtop) libraries to interface with the system and [gtk](https://github.com/GNOME/gtk) as well as [adwaita](https://gnome.pages.gitlab.gnome.org/libadwaita/doc/main/index.html) to construct a user interface.
 
